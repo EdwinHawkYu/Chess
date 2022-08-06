@@ -1,0 +1,47 @@
+body{
+    /* display: grid;
+    grid-template-columns: repeat(5,1fr);
+    grid-template-rows: repeat(3, auto); */
+    background-color: whitesmoke;
+    text-align: center;
+}
+
+nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 50px;
+    grid-column: 1/6;
+}
+
+h2{
+    font-size: 22px;
+    margin: 40px;
+}
+
+#board{
+    display:grid;
+    margin: auto;
+    width: 700px;
+    height: 700px;
+    grid-template-columns: repeat(8,1fr);
+    grid-template-rows: repeat(8,1fr);
+    border: 1px solid black;
+}
+
+.cell{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    border:1px solid black;
+    padding: auto;
+}
+
+.cell:hover{
+    background-color: rgb(126, 126, 126);
+}
+
+button{
+    margin: 50px;
+}
