@@ -149,6 +149,10 @@ function pieceMovement(e){
 
         console.log('The knight can move to: '+knightPos)
     }
+//Bishop
+    if(piece == 'Bishop'){
+        bishopMovement(piecePos)
+    }
 
 }
 
@@ -163,25 +167,83 @@ function convertPosition(id){
 //Knight Movement
 function knightMovement(pos, X, Y) { //X and Y represent increase or decrease in that plane
     let arr = pos.split("");
-    let curRowIdx = letterNumIdx.indexOf(pos[0]); //Index of the letter
-    let newX = parseInt(curRowIdx) + X;
+    let curX = letterNumIdx.indexOf(arr[0]); //Index of the letter
+    let newX = parseInt(curX) + X;
     let newY = parseInt(arr[1]) + Y;
     let newCoor = [newX, newY];
     let newid = [letterNumIdx[newX], newY].join("");
 
     //Checks if new coordinates is out of range
     if (0 > newX || newX > 7 || 1 > newY || newY > 8) {
-        return
+        return;
       }
   
     //Return new coordinate
-    return newid
+    return newid;
   }
 
 //Bishop Movement 
-function bishopMovement(pos){
-
-}
+function bishopMovement(pos) {
+    let bishopPositions = [];
+    let arr = pos.split("");
+    let curX = letterNumIdx.indexOf(arr[0]); //Index of the letter
+    let curY = arr[1];
+    let refY = parseInt(curY);
+    //Top Right Side
+    for (let row = curX; row < 8; row++) {
+      //Check for Range Limit
+      if (row >= 7 || refY >= 8) {
+        break;
+      }
+      let newRow = row + 1;
+      let newCol = refY + 1;
+      let newid = [letterNumIdx[newRow], newCol].join("");
+      refY++;
+      console.log('Top Right Side :' + newid);
+    }
+  
+    refY = parseInt(curY);
+    //Top Left Side
+    for (let x = curX; x >= 0; x--) {
+      //Check for Range Limit
+      if (x <= 0 || refY >= 8) {
+        break;
+      }
+      let newRow = parseInt(x) - 1;
+      let newCol = refY + 1;
+      let newid = [letterNumIdx[newRow], newCol].join("");
+      refY++;
+      console.log('Top Left Side :' + newid);
+    }
+  
+    //Bottom Right Side
+    refY = parseInt(curY);
+    for (let x = curX; x < 8; x++) {
+      //Check for Range Limit
+      if (x >= 7 || refY <= 1) {
+        break;
+      }
+      let newRow = parseInt(x) + 1;
+      let newCol = refY - 1;
+      let newid = [letterNumIdx[newRow], newCol].join("");
+      refY--;
+      console.log('Bottom Right Side :' + newid);
+    }
+  
+    //Bottom Left Side
+    refY = parseInt(curY);
+    for (let x = curX; x >= 0; x--) {
+      //Check for Range Limit
+      if (x <= 0 || refY <= 1) {
+        break;
+      }
+      let newRow = parseInt(x) - 1;
+      let newCol = refY - 1;
+      let newid = [letterNumIdx[newRow], newCol].join("");
+      refY--;
+      console.log('Bottom Left Side :' + newid);
+    }
+  }
 
 //Special Functions
 //Pawn Promotes
