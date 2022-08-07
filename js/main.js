@@ -40,7 +40,7 @@ function createBoard(){
 
 
 //Event Listeners
-chessboard.addEventListener('click', playerClick)
+chessboard.addEventListener('click', playerClick) //Used for testing purposes ---To be deleted afterwards
 chessboard.addEventListener('click',pieceMovement)
 
 
@@ -58,41 +58,41 @@ function playerClick(e){
 function setBoard(){
     
     //Set Kings and Queen
-    document.getElementById('E1').innerHTML = 'King';
+    document.getElementById('E1').innerText = 'King';
     document.getElementById('E1')._variable = king;
-    document.getElementById('D1').innerHTML = 'Queen';
-    document.getElementById('E8').innerHTML = 'King';
-    document.getElementById('D8').innerHTML = 'Queen';
+    document.getElementById('D1').innerText = 'Queen';
+    document.getElementById('E8').innerText = 'King';
+    document.getElementById('D8').innerText = 'Queen';
 
     //Set Pawns
     for (i=0; i<8 ; i++){
         if(document.getElementById(letterNumIdx[i]+'2')){
-            document.getElementById(letterNumIdx[i]+'2').innerHTML = 'Pawn';
+            document.getElementById(letterNumIdx[i]+'2').innerText = 'Pawn';
             document.getElementById(letterNumIdx[i]+'2').classList.add('White');
             document.getElementById(letterNumIdx[i]+'2')._variable = pawn;
         }
         if(document.getElementById(letterNumIdx[i]+'7')){
-            document.getElementById(letterNumIdx[i]+'7').innerHTML = 'Pawn';
+            document.getElementById(letterNumIdx[i]+'7').innerText = 'Pawn';
             document.getElementById(letterNumIdx[i]+'7').classList.add('Black');
             document.getElementById(letterNumIdx[i]+'7')._variable = pawn;
         }
     }
 
     //Set Knights and Bishops
-    document.getElementById('C1').innerHTML = 'Bishop';
-    document.getElementById('F1').innerHTML = 'Bishop';
-    document.getElementById('B1').innerHTML = 'Knight';
-    document.getElementById('G1').innerHTML = 'Knight';
-    document.getElementById('C8').innerHTML = 'Bishop';
-    document.getElementById('F8').innerHTML = 'Bishop';
-    document.getElementById('B8').innerHTML = 'Knight';
-    document.getElementById('G8').innerHTML = 'Knight';
+    document.getElementById('C1').innerText = 'Bishop';
+    document.getElementById('F1').innerText = 'Bishop';
+    document.getElementById('B1').innerText = 'Knight';
+    document.getElementById('G1').innerText = 'Knight';
+    document.getElementById('C8').innerText = 'Bishop';
+    document.getElementById('F8').innerText = 'Bishop';
+    document.getElementById('B8').innerText = 'Knight';
+    document.getElementById('G8').innerText = 'Knight';
 
     //Set Rooks
-    document.getElementById('A1').innerHTML = 'Rook';
-    document.getElementById('A8').innerHTML = 'Rook';
-    document.getElementById('H1').innerHTML = 'Rook';
-    document.getElementById('H8').innerHTML = 'Rook';
+    document.getElementById('A1').innerText = 'Rook';
+    document.getElementById('A8').innerText = 'Rook';
+    document.getElementById('H1').innerText = 'Rook';
+    document.getElementById('H8').innerText = 'Rook';
 
     //Set white and black class
     for(let row = 1; row<9 ; row++){
@@ -108,7 +108,7 @@ function setBoard(){
 function pieceMovement(e){
 
     let newPos = [];
-    let piece = e.target.innerHTML;
+    let piece = e.target.innerText;
     let pClass = e.target.classList;
     let piecePos = e.target.id;
 
@@ -118,7 +118,7 @@ function pieceMovement(e){
         newPos.push(currentPos[0]);
         newPos.push(parseInt(currentPos[1]) + 1);
         let newid = newPos.join(''); //New position as a string
-        console.log(newid);
+        console.log('The pawn can move to '+newid);
     }
 
     if(piece === 'Pawn' && pClass.contains('Black')){
@@ -126,48 +126,62 @@ function pieceMovement(e){
         newPos.push(currentPos[0]);
         newPos.push(parseInt(currentPos[1]) - 1);
         let newid = newPos.join(''); //New position as a string
-        console.log(newid);
+        console.log('The pawn can move to '+newid);
     }
 
 //Knight
     if(piece == 'Knight'){
         possiblePos = [];
-        let currentPos = convertPosition(piecePos);
-        
-        console.log(currentPos);
+        //Top
+        possiblePos.push(knightMovement(piecePos,1,2));
+        possiblePos.push(knightMovement(piecePos,-1,2));
+        //Bottom
+        possiblePos.push(knightMovement(piecePos,1,-2));
+        possiblePos.push(knightMovement(piecePos,-1,-2));
+        // Right
+        possiblePos.push(knightMovement(piecePos,2,1));
+        possiblePos.push(knightMovement(piecePos,2,-1));
+        //Left
+        possiblePos.push(knightMovement(piecePos,-2,1));
+        possiblePos.push(knightMovement(piecePos,-2,-1));
+
+        knightPos = possiblePos.filter(function(el){return el!== undefined});
+
+        console.log('The knight can move to: '+knightPos)
     }
 
 }
 
-function knightPositions(pos){
-    let possiblePositions = [];
-    let currentPos = convertPosition(pos);
-    //Top Positions
-    possiblePositions.push(currentPos[])
-}
 
 function convertPosition(id){
     return id.split("");
 }
 
-//Used to determine new position (Testing for knight movement)
-function updatedConvert(pos, X, Y) { //X and Y represent increase or decrease in that plane
+
+
+//Piece Movement Functions:
+//Knight Movement
+function knightMovement(pos, X, Y) { //X and Y represent increase or decrease in that plane
     let arr = pos.split("");
     let curRowIdx = letterNumIdx.indexOf(pos[0]); //Index of the letter
     let newX = parseInt(curRowIdx) + X;
     let newY = parseInt(arr[1]) + Y;
     let newCoor = [newX, newY];
     let newid = [letterNumIdx[newX], newY].join("");
-    
+
     //Checks if new coordinates is out of range
     if (0 > newX || newX > 7 || 1 > newY || newY > 8) {
         return
       }
   
-    //Logs and return new coordinate
-    console.log(newid)
+    //Return new coordinate
     return newid
   }
+
+//Bishop Movement 
+function bishopMovement(pos){
+
+}
 
 //Special Functions
 //Pawn Promotes
