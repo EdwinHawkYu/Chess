@@ -147,20 +147,17 @@ function pieceMovement(e){
 
         knightPos = possiblePos.filter(function(el){return el!== undefined});
 
-        console.log('The knight can move to: '+knightPos)
+        console.log('The knight can move to: '+knightPos);
     }
 //Bishop
     if(piece == 'Bishop'){
-        bishopMovement(piecePos)
+        bishopMovement(piecePos);
     }
-
+//Rook
+    if(piece == 'Rook'){
+        rookMovement(piecePos);
+    }
 }
-
-
-function convertPosition(id){
-    return id.split("");
-}
-
 
 
 //Piece Movement Functions:
@@ -245,6 +242,42 @@ function bishopMovement(pos) {
     }
   }
 
+//Rock Movement
+function rookMovement(pos) {
+    let rookPositions = [];
+    let arr = pos.split("");
+    let curX = letterNumIdx.indexOf(arr[0]);
+    let curY = parseInt(arr[1]);
+  
+    //Top
+    for (let y = curY + 1; y < 9; y++) {
+      let newid = [arr[0], y].join("");
+      rookPositions.push(newid);
+    }
+    //Bottom
+    for (let y = curY - 1; y > 0; y--) {
+      let newid = [arr[0], y].join("");
+      rookPositions.push(newid);
+    }
+    //Right
+    for (let x = curX + 1; x < 8; x++) {
+      let newid = [letterNumIdx[x], curY].join("");
+      rookPositions.push(newid);
+    }
+    //Left
+    for (let x = curX - 1; x >= 0; x--) {
+      let newid = [letterNumIdx[x], curY].join("");
+      rookPositions.push(newid);
+    }
+    console.log(rookPositions) //Logs all possible positions in a single array
+  }
+
+  
+function convertPosition(id){
+    return id.split("");
+}
+
 //Special Functions
+//Starting Pawn - Double Square
 //Pawn Promotes
 //King-Rook Castle
