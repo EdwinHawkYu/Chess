@@ -157,10 +157,22 @@ function pieceMovement(e){
     if(piece == 'Rook'){
         rookMovement(piecePos);
     }
+//Queen
+    if(piece == 'Queen'){
+        let move1 = bishopMovement(piecePos);
+        let move2 = rookMovement(piecePos);
+        let queenPositions = move1.concat(move2);
+        console.log(queenPositions);
+    }
+//King
+    if(piece == 'King'){
+        kingMovement(piecePos);
+    }
+
 }
 
 
-//Piece Movement Functions:
+//Piece Movement Functions - Determine available positions:
 //Knight Movement
 function knightMovement(pos, X, Y) { //X and Y represent increase or decrease in that plane
     let arr = pos.split("");
@@ -196,7 +208,7 @@ function bishopMovement(pos) {
       let newCol = refY + 1;
       let newid = [letterNumIdx[newRow], newCol].join("");
       refY++;
-      console.log('Top Right Side :' + newid);
+      bishopPositions.push(newid);
     }
   
     refY = parseInt(curY);
@@ -210,7 +222,7 @@ function bishopMovement(pos) {
       let newCol = refY + 1;
       let newid = [letterNumIdx[newRow], newCol].join("");
       refY++;
-      console.log('Top Left Side :' + newid);
+      bishopPositions.push(newid);
     }
   
     //Bottom Right Side
@@ -224,7 +236,7 @@ function bishopMovement(pos) {
       let newCol = refY - 1;
       let newid = [letterNumIdx[newRow], newCol].join("");
       refY--;
-      console.log('Bottom Right Side :' + newid);
+      bishopPositions.push(newid);
     }
   
     //Bottom Left Side
@@ -238,8 +250,10 @@ function bishopMovement(pos) {
       let newCol = refY - 1;
       let newid = [letterNumIdx[newRow], newCol].join("");
       refY--;
-      console.log('Bottom Left Side :' + newid);
+      bishopPositions.push(newid);
     }
+    console.log(bishopPositions);
+    return bishopPositions;
   }
 
 //Rock Movement
@@ -270,6 +284,51 @@ function rookMovement(pos) {
       rookPositions.push(newid);
     }
     console.log(rookPositions) //Logs all possible positions in a single array
+    return rookPositions
+  }
+
+//King Movement
+function kingMovement(pos) {
+    let initialPos = [];
+    let arr = pos.split("");
+    let curX = letterNumIdx.indexOf(arr[0]); //Index of the letter
+    let curY = parseInt(arr[1]);
+  
+    let right = curX + 1;
+    let left = curX - 1;
+    let up = curY + 1;
+    let down = curY - 1;
+  
+    if(right>7){
+      right = undefined;
+    }
+    if(left<0){
+      left = undefined;
+    }
+    if(up>8){
+      up = undefined;
+    }
+    if(down<1){
+      down = undefined;
+    }
+    
+    let moveUp = [letterNumIdx[curX], up].join("");
+    let moveDown = [letterNumIdx[curX], down].join("");
+    let moveRight = [letterNumIdx[right],curY].join("");
+    let moveLeft = [letterNumIdx[left],curY].join("");
+    let upRight = [letterNumIdx[right], up].join("");
+    let upLeft = [letterNumIdx[left], up].join("");
+    let downRight = [letterNumIdx[right], down].join("");
+    let downLeft = [letterNumIdx[left], down].join("");
+  
+    initialPos.push(moveUp,moveDown,moveRight, moveLeft, upRight,upLeft,downRight,downLeft);
+  
+    //Filters for legal cells available
+    let kingPositions = initialPos.filter(function(el){
+      return el.length > 1;
+    })
+    
+    console.log(kingPositions);
   }
 
   
