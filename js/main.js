@@ -102,7 +102,36 @@ function pieceMovement(piece, pClass, piecePos) {
     let currentPos = convertPosition(piecePos);
     newPos.push(currentPos[0]);
     newPos.push(parseInt(currentPos[1]) + 1);
-    newid.push(newPos.join("")); //New position as a string
+
+    //Checks if there is a piece in front of the pawn - if true ~ can't move
+    if (document.getElementById(newPos.join("")).innerText === "") {
+      newid.push(newPos.join("")); //New position as a string
+    }
+
+    //Diagonal Pawn Takes
+    let upRight = returnDia(piecePos, "White", "right").join("");
+    let upLeft = returnDia(piecePos, "White", "left").join("");
+
+    if (
+      document.getElementById(upRight).innerText != "" &&
+      document.getElementById(upRight).classList.contains("Black")
+    ) {
+      newid.push(upRight);
+    }
+    if (
+      document.getElementById(upLeft).innerText != "" &&
+      document.getElementById(upLeft).classList.contains("Black")
+    ) {
+      newid.push(upLeft);
+    }
+
+    //First pawn move - 2 squares
+    if (parseInt(currentPos[1]) === 2) {
+      newPos = [];
+      newPos.push(currentPos[0]);
+      newPos.push(parseInt(currentPos[1]) + 2);
+      newid.push(newPos.join(""));
+    }
     return newid;
   }
 
@@ -111,7 +140,34 @@ function pieceMovement(piece, pClass, piecePos) {
     let currentPos = convertPosition(piecePos);
     newPos.push(currentPos[0]);
     newPos.push(parseInt(currentPos[1]) - 1);
-    newid.push(newPos.join("")); //New position as a string
+
+    //Checks if there is a piece in front of the pawn - if true ~ can't move
+    if (document.getElementById(newPos.join("")).innerText === "") {
+      newid.push(newPos.join("")); //New position as a string
+    }
+    //Diagonal Pawn Takes
+    let downRight = returnDia(piecePos, "Black", "right").join("");
+    let downLeft = returnDia(piecePos, "Black", "left").join("");
+
+    if (
+      document.getElementById(downRight).innerText != "" &&
+      document.getElementById(downRight).classList.contains("White")
+    ) {
+      newid.push(downRight);
+    }
+    if (
+      document.getElementById(downLeft).innerText != "" &&
+      document.getElementById(downLeft).classList.contains("White")
+    ) {
+      newid.push(downLeft);
+    }
+
+    if (parseInt(currentPos[1]) === 7) {
+      newPos = [];
+      newPos.push(currentPos[0]);
+      newPos.push(parseInt(currentPos[1]) - 2);
+      newid.push(newPos.join(""));
+    }
     return newid;
   }
 
@@ -165,6 +221,95 @@ function pieceMovement(piece, pClass, piecePos) {
 }
 
 //Piece Movement Functions - Determine available positions:
+
+//Pawn take piece movement
+function returnDia(pos, color, dir) {
+  let takePositions = [];
+  let arr = pos.split("");
+  let curX = letterNumIdx.indexOf(arr[0]);
+  let curY = parseInt(arr[1]);
+  let up = curY + 1;
+  let down = curY - 1;
+  let right = curX + 1;
+  let left = curX - 1;
+
+  if (right > 7) {
+    right = undefined;
+  }
+  if (left < 0) {
+    left = undefined;
+  }
+  if (up > 8) {
+    up = undefined;
+  }
+  if (down < 1) {
+    down = undefined;
+  }
+
+  if (color === "White" && dir === "left") {
+    var diagonalLeft = [letterNumIdx[left], up].join("");
+    takePositions.push(diagonalLeft);
+  }
+  if (color === "White" && dir === "right") {
+    var diagonalRight = [letterNumIdx[right], up].join("");
+    takePositions.push(diagonalRight);
+  }
+  if (color === "Black" && dir === "left") {
+    var diagonalLeft = [letterNumIdx[left], down].join("");
+    takePositions.push(diagonalLeft);
+  }
+  if (color === "Black" && dir === "right") {
+    var diagonalRight = [letterNumIdx[right], down].join("");
+    takePositions.push(diagonalRight);
+  }
+  console.log(takePositions);
+  return takePositions;
+}
+/*
+function pawnTakes(pos, color) {
+  let takePositions = [];
+  let arr = pos.split("");
+  let curX = letterNumIdx.indexOf(arr[0]);
+  let curY = parseInt(arr[1]);
+  let up = curY + 1;
+  let down = curY - 1;
+  let right = curX + 1;
+  let left = curX - 1;
+
+  if (right > 7) {
+    right = undefined;
+  }
+  if (left < 0) {
+    left = undefined;
+  }
+  if (up > 8) {
+    up = undefined;
+  }
+  if (down < 1) {
+    down = undefined;
+  }
+
+  if (color === 'White') {
+    var diagonalRight = [letterNumIdx[right], up].join("");
+    var diagonalLeft = [letterNumIdx[left], up].join("");
+    takePositions.push(diagonalRight, diagonalLeft);
+  }
+
+  if (color === 'Black') {
+    var diagonalRight = [letterNumIdx[right], down].join("");
+    var diagonalLeft = [letterNumIdx[left], down].join("");
+    takePositions.push(diagonalRight, diagonalLeft);
+  }
+
+  let pawnPositions = takePositions.filter(function(el) {
+    return el.length > 1;
+  })
+
+  return pawnPositions;
+}
+
+*/
+
 //Knight Movement
 function knightMovement(pos, X, Y) {
   //X and Y represent increase or decrease in that plane
@@ -203,10 +348,13 @@ function bishopMovement(pos) {
     let newCol = refY + 1;
     let newid = [letterNumIdx[newRow], newCol].join("");
 
-    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       bishopPositions.push(newid);
       break;
-    }else if(document.getElementById(newid).innerText !=""){
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
 
@@ -225,10 +373,13 @@ function bishopMovement(pos) {
     let newCol = refY + 1;
     let newid = [letterNumIdx[newRow], newCol].join("");
 
-    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       bishopPositions.push(newid);
       break;
-    }else if(document.getElementById(newid).innerText !=""){
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
     refY++;
@@ -246,10 +397,13 @@ function bishopMovement(pos) {
     let newCol = refY - 1;
     let newid = [letterNumIdx[newRow], newCol].join("");
 
-    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       bishopPositions.push(newid);
       break;
-    }else if(document.getElementById(newid).innerText !=""){
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
 
@@ -268,10 +422,13 @@ function bishopMovement(pos) {
     let newCol = refY - 1;
     let newid = [letterNumIdx[newRow], newCol].join("");
 
-    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       bishopPositions.push(newid);
       break;
-    }else if(document.getElementById(newid).innerText !=""){
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
 
@@ -292,10 +449,13 @@ function rookMovement(pos) {
   //Top
   for (let y = curY + 1; y < 9; y++) {
     let newid = [arr[0], y].join("");
-    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       rookPositions.push(newid);
       break;
-    }else if(document.getElementById(newid).innerText !=""){
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
     rookPositions.push(newid);
@@ -303,10 +463,13 @@ function rookMovement(pos) {
   //Bottom
   for (let y = curY - 1; y > 0; y--) {
     let newid = [arr[0], y].join("");
-    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       rookPositions.push(newid);
       break;
-    }else if(document.getElementById(newid).innerText !=""){
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
     rookPositions.push(newid);
@@ -314,10 +477,13 @@ function rookMovement(pos) {
   //Right
   for (let x = curX + 1; x < 8; x++) {
     let newid = [letterNumIdx[x], curY].join("");
-    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       rookPositions.push(newid);
       break;
-    }else if(document.getElementById(newid).innerText !=""){
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
     rookPositions.push(newid);
@@ -325,10 +491,13 @@ function rookMovement(pos) {
   //Left
   for (let x = curX - 1; x >= 0; x--) {
     let newid = [letterNumIdx[x], curY].join("");
-    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       rookPositions.push(newid);
       break;
-    }else if(document.getElementById(newid).innerText !=""){
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
     rookPositions.push(newid);
@@ -394,8 +563,7 @@ function convertPosition(id) {
   return id.split("");
 }
 
-//////////////////////////
-//////////////////////////
+//Move pieces by selecting and clicking on legal cells
 
 function movePiece(e) {
   let newPos = [];
@@ -427,7 +595,7 @@ function movePiece(e) {
     if (legalMoves.includes(piecePos)) {
       //Case 2 - Clicked onto another spot or opposite piece
       e.target.innerText = activePieceText;
-      pClass.remove('White','Black');
+      pClass.remove("White", "Black");
       pClass.add(activePieceClass);
 
       //Clear Cached Previous Piece Position and Values
@@ -445,20 +613,19 @@ function movePiece(e) {
     }
   } else if (activeCell === true && pClass.contains(activePieceClass)) {
     activeCell = false;
-    activePieceClass = '';
+    activePieceClass = "";
     clearHighlights(legalMoves);
   }
 }
 
 //Use to add images of the pieces into elements
 function addImage() {
-  document.querySelectorAll('.cell').forEach(el => {
-    if(el.innerText == 'Pawn' && el.classList.contains('White')){
+  document.querySelectorAll(".cell").forEach((el) => {
+    if (el.innerText == "Pawn" && el.classList.contains("White")) {
       // el.innerHTML = `<img src="img/Wpawn.png">`;
       // el.style.backgroundImage = "url('img/Wpawn.png')";
     }
-  })
-  
+  });
 }
 // addImage();
 
@@ -475,16 +642,15 @@ function clearHighlights(arr) {
 }
 
 //Returns the color of the piece (White or black)
-function pieceColor(pos){
-  let pieceColor ='';
-  if(document.getElementById(pos).classList.contains('White')){
-    pieceColor = 'White'
-  } else if(document.getElementById(pos).classList.contains('Black')){
-    pieceColor = 'Black'
+function pieceColor(pos) {
+  let pieceColor = "";
+  if (document.getElementById(pos).classList.contains("White")) {
+    pieceColor = "White";
+  } else if (document.getElementById(pos).classList.contains("Black")) {
+    pieceColor = "Black";
   }
-  return pieceColor
+  return pieceColor;
 }
-
 
 //Checks if there are any pieces within the given array
 function checkForPieces(arr, pClass) {
@@ -498,7 +664,7 @@ function checkForPieces(arr, pClass) {
     }
   });
 
-  console.log(pClass)
+  console.log(pClass);
   console.log("These are the new positions: " + newPos);
   return newPos;
 }
