@@ -36,6 +36,8 @@ h2{
     flex-direction: column;
     border:1px solid black;
     padding: auto;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .cell:hover{

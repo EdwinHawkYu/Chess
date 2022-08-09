@@ -1,339 +1,506 @@
-console.log('Connected!')
+console.log("Connected!");
 //Global Variables
 //Letter to number Index
-let chessboard = document.getElementById('board');
-let letterNumIdx = ['A','B','C','D','E','F','G','H'];
+let chessboard = document.getElementById("board");
+let letterNumIdx = ["A", "B", "C", "D", "E", "F", "G", "H"];
+let activeCell = false;
+let activePieceText = "";
+let activePiecePos = "";
+let activePieceClass = "";
 let whiteMoves = [];
 let blackMoves = [];
+//Used in moving the pieces
+let piecePositions = "";
+let legalMoves = "";
 
-let king = {
-    name: 'King',
-    pValue: 10,
-    step: 1,
-    dir: 'All'
-}
-
-let pawn = {
-    name: 'Pawn',
-    pValue: 1,
-    step: 1,
-    dir: 'forward'
-}
-let currentRow = [];
-let currentCol = [];
-
+//Calling Functions
 createBoard();
 setBoard();
 
-
 //Create 8x8 board
-function createBoard(){
-    for(let i=8 ; i>0 ; i--){
-        for(let j=0 ; j<8 ; j++){
-            let newCell = document.createElement('div');
-            newCell.id = letterNumIdx[j]+i;
-            newCell.classList.add('cell');
-            chessboard.append(newCell);
-        }
+function createBoard() {
+  for (let i = 8; i > 0; i--) {
+    for (let j = 0; j < 8; j++) {
+      let newCell = document.createElement("div");
+      newCell.id = letterNumIdx[j] + i;
+      newCell.classList.add("cell");
+      chessboard.append(newCell);
     }
+  }
 }
 
-
 //Event Listeners
-chessboard.addEventListener('click', playerClick) //Used for testing purposes ---To be deleted afterwards
-chessboard.addEventListener('click',pieceMovement)
-
-
+// chessboard.addEventListener('click', playerClick); //Used for testing purposes ---To be deleted afterwards
+// chessboard.addEventListener('click',pieceMovement);
+chessboard.addEventListener("click", movePiece);
 
 //Functions
 
-function playerClick(e){
-    let currentPosition = e.target.id;
-    console.log(e.target)
-    console.dir(e.target)
-    console.log('Player Clicked on '+currentPosition);
+function playerClick(e) {
+  let currentPosition = e.target.id;
+  console.log(e.target);
+  console.dir(e.target);
+  console.log("Player Clicked on " + currentPosition);
 }
 
 //Set starting positions
-function setBoard(){
-    
-    //Set Kings and Queen
-    document.getElementById('E1').innerText = 'King';
-    document.getElementById('E1')._variable = king;
-    document.getElementById('D1').innerText = 'Queen';
-    document.getElementById('E8').innerText = 'King';
-    document.getElementById('D8').innerText = 'Queen';
+function setBoard() {
+  //Set Kings and Queen
+  document.getElementById("E1").innerText = "King";
+  document.getElementById("D1").innerText = "Queen";
+  document.getElementById("E8").innerText = "King";
+  document.getElementById("D8").innerText = "Queen";
 
-    //Set Pawns
-    for (i=0; i<8 ; i++){
-        if(document.getElementById(letterNumIdx[i]+'2')){
-            document.getElementById(letterNumIdx[i]+'2').innerText = 'Pawn';
-            document.getElementById(letterNumIdx[i]+'2').classList.add('White');
-            document.getElementById(letterNumIdx[i]+'2')._variable = pawn;
-        }
-        if(document.getElementById(letterNumIdx[i]+'7')){
-            document.getElementById(letterNumIdx[i]+'7').innerText = 'Pawn';
-            document.getElementById(letterNumIdx[i]+'7').classList.add('Black');
-            document.getElementById(letterNumIdx[i]+'7')._variable = pawn;
-        }
+  //Set Pawns
+  for (i = 0; i < 8; i++) {
+    if (document.getElementById(letterNumIdx[i] + "2")) {
+      document.getElementById(letterNumIdx[i] + "2").innerText = "Pawn";
+      document.getElementById(letterNumIdx[i] + "2").classList.add("White");
     }
-
-    //Set Knights and Bishops
-    document.getElementById('C1').innerText = 'Bishop';
-    document.getElementById('F1').innerText = 'Bishop';
-    document.getElementById('B1').innerText = 'Knight';
-    document.getElementById('G1').innerText = 'Knight';
-    document.getElementById('C8').innerText = 'Bishop';
-    document.getElementById('F8').innerText = 'Bishop';
-    document.getElementById('B8').innerText = 'Knight';
-    document.getElementById('G8').innerText = 'Knight';
-
-    //Set Rooks
-    document.getElementById('A1').innerText = 'Rook';
-    document.getElementById('A8').innerText = 'Rook';
-    document.getElementById('H1').innerText = 'Rook';
-    document.getElementById('H8').innerText = 'Rook';
-
-    //Set white and black class
-    for(let row = 1; row<9 ; row++){
-        if(document.getElementById(letterNumIdx[row]+ '1')){
-            document.getElementById(letterNumIdx[row]+ '1').classList.add('White');
-        }
-        if(document.getElementById(letterNumIdx[row]+'8')){
-            document.getElementById(letterNumIdx[row]+'8').classList.add('Black');
-        }
+    if (document.getElementById(letterNumIdx[i] + "7")) {
+      document.getElementById(letterNumIdx[i] + "7").innerText = "Pawn";
+      document.getElementById(letterNumIdx[i] + "7").classList.add("Black");
     }
+  }
+
+  //Set Knights and Bishops
+  document.getElementById("C1").innerText = "Bishop";
+  document.getElementById("F1").innerText = "Bishop";
+  document.getElementById("B1").innerText = "Knight";
+  document.getElementById("G1").innerText = "Knight";
+  document.getElementById("C8").innerText = "Bishop";
+  document.getElementById("F8").innerText = "Bishop";
+  document.getElementById("B8").innerText = "Knight";
+  document.getElementById("G8").innerText = "Knight";
+
+  //Set Rooks
+  document.getElementById("A1").innerText = "Rook";
+  document.getElementById("A8").innerText = "Rook";
+  document.getElementById("H1").innerText = "Rook";
+  document.getElementById("H8").innerText = "Rook";
+
+  //Set white and black class
+  for (let row = 0; row < 9; row++) {
+    if (document.getElementById(letterNumIdx[row] + "1")) {
+      document.getElementById(letterNumIdx[row] + "1").classList.add("White");
+    }
+    if (document.getElementById(letterNumIdx[row] + "8")) {
+      document.getElementById(letterNumIdx[row] + "8").classList.add("Black");
+    }
+  }
 }
 
-function pieceMovement(e){
+function pieceMovement(piece, pClass, piecePos) {
+  let newPos = [];
+  // let piece = e.target.innerText;
+  // let pClass = e.target.classList;
+  // let piecePos = e.target.id;
 
-    let newPos = [];
-    let piece = e.target.innerText;
-    let pClass = e.target.classList;
-    let piecePos = e.target.id;
-
-//Pawn
-    if(piece === 'Pawn' && pClass.contains('White')){
-        let currentPos = convertPosition(piecePos);
-        newPos.push(currentPos[0]);
-        newPos.push(parseInt(currentPos[1]) + 1);
-        let newid = newPos.join(''); //New position as a string
-        console.log('The pawn can move to '+newid);
-    }
-
-    if(piece === 'Pawn' && pClass.contains('Black')){
-        let currentPos = convertPosition(piecePos);
-        newPos.push(currentPos[0]);
-        newPos.push(parseInt(currentPos[1]) - 1);
-        let newid = newPos.join(''); //New position as a string
-        console.log('The pawn can move to '+newid);
-    }
-
-//Knight
-    if(piece == 'Knight'){
-        possiblePos = [];
-        //Top
-        possiblePos.push(knightMovement(piecePos,1,2));
-        possiblePos.push(knightMovement(piecePos,-1,2));
-        //Bottom
-        possiblePos.push(knightMovement(piecePos,1,-2));
-        possiblePos.push(knightMovement(piecePos,-1,-2));
-        // Right
-        possiblePos.push(knightMovement(piecePos,2,1));
-        possiblePos.push(knightMovement(piecePos,2,-1));
-        //Left
-        possiblePos.push(knightMovement(piecePos,-2,1));
-        possiblePos.push(knightMovement(piecePos,-2,-1));
-
-        knightPos = possiblePos.filter(function(el){return el!== undefined});
-
-        console.log('The knight can move to: '+knightPos);
-    }
-//Bishop
-    if(piece == 'Bishop'){
-        bishopMovement(piecePos);
-    }
-//Rook
-    if(piece == 'Rook'){
-        rookMovement(piecePos);
-    }
-//Queen
-    if(piece == 'Queen'){
-        let move1 = bishopMovement(piecePos);
-        let move2 = rookMovement(piecePos);
-        let queenPositions = move1.concat(move2);
-        console.log(queenPositions);
-    }
-//King
-    if(piece == 'King'){
-        kingMovement(piecePos);
-    }
-
-}
-
-
-//Piece Movement Functions - Determine available positions:
-//Knight Movement
-function knightMovement(pos, X, Y) { //X and Y represent increase or decrease in that plane
-    let arr = pos.split("");
-    let curX = letterNumIdx.indexOf(arr[0]); //Index of the letter
-    let newX = parseInt(curX) + X;
-    let newY = parseInt(arr[1]) + Y;
-    let newCoor = [newX, newY];
-    let newid = [letterNumIdx[newX], newY].join("");
-
-    //Checks if new coordinates is out of range
-    if (0 > newX || newX > 7 || 1 > newY || newY > 8) {
-        return;
-      }
-  
-    //Return new coordinate
+  //Pawn
+  if (piece === "Pawn" && pClass.contains("White")) {
+    let newid = [];
+    let currentPos = convertPosition(piecePos);
+    newPos.push(currentPos[0]);
+    newPos.push(parseInt(currentPos[1]) + 1);
+    newid.push(newPos.join("")); //New position as a string
     return newid;
   }
 
-//Bishop Movement 
-function bishopMovement(pos) {
-    let bishopPositions = [];
-    let arr = pos.split("");
-    let curX = letterNumIdx.indexOf(arr[0]); //Index of the letter
-    let curY = arr[1];
-    let refY = parseInt(curY);
-    //Top Right Side
-    for (let row = curX; row < 8; row++) {
-      //Check for Range Limit
-      if (row >= 7 || refY >= 8) {
-        break;
-      }
-      let newRow = row + 1;
-      let newCol = refY + 1;
-      let newid = [letterNumIdx[newRow], newCol].join("");
-      refY++;
-      bishopPositions.push(newid);
-    }
-  
-    refY = parseInt(curY);
-    //Top Left Side
-    for (let x = curX; x >= 0; x--) {
-      //Check for Range Limit
-      if (x <= 0 || refY >= 8) {
-        break;
-      }
-      let newRow = parseInt(x) - 1;
-      let newCol = refY + 1;
-      let newid = [letterNumIdx[newRow], newCol].join("");
-      refY++;
-      bishopPositions.push(newid);
-    }
-  
-    //Bottom Right Side
-    refY = parseInt(curY);
-    for (let x = curX; x < 8; x++) {
-      //Check for Range Limit
-      if (x >= 7 || refY <= 1) {
-        break;
-      }
-      let newRow = parseInt(x) + 1;
-      let newCol = refY - 1;
-      let newid = [letterNumIdx[newRow], newCol].join("");
-      refY--;
-      bishopPositions.push(newid);
-    }
-  
-    //Bottom Left Side
-    refY = parseInt(curY);
-    for (let x = curX; x >= 0; x--) {
-      //Check for Range Limit
-      if (x <= 0 || refY <= 1) {
-        break;
-      }
-      let newRow = parseInt(x) - 1;
-      let newCol = refY - 1;
-      let newid = [letterNumIdx[newRow], newCol].join("");
-      refY--;
-      bishopPositions.push(newid);
-    }
-    console.log(bishopPositions);
+  if (piece === "Pawn" && pClass.contains("Black")) {
+    let newid = [];
+    let currentPos = convertPosition(piecePos);
+    newPos.push(currentPos[0]);
+    newPos.push(parseInt(currentPos[1]) - 1);
+    newid.push(newPos.join("")); //New position as a string
+    return newid;
+  }
+
+  //Knight
+  if (piece == "Knight") {
+    possiblePos = [];
+    //Top
+    possiblePos.push(knightMovement(piecePos, 1, 2));
+    possiblePos.push(knightMovement(piecePos, -1, 2));
+    //Bottom
+    possiblePos.push(knightMovement(piecePos, 1, -2));
+    possiblePos.push(knightMovement(piecePos, -1, -2));
+    // Right
+    possiblePos.push(knightMovement(piecePos, 2, 1));
+    possiblePos.push(knightMovement(piecePos, 2, -1));
+    //Left
+    possiblePos.push(knightMovement(piecePos, -2, 1));
+    possiblePos.push(knightMovement(piecePos, -2, -1));
+
+    knightPos = possiblePos.filter(function (el) {
+      return el !== undefined;
+    });
+
+    checkForPieces(knightPos);
+    return knightPos;
+  }
+  //Bishop
+  if (piece == "Bishop") {
+    let bishopPositions = bishopMovement(piecePos);
     return bishopPositions;
   }
+  //Rook
+  if (piece == "Rook") {
+    let rookPositions = rookMovement(piecePos);
+    return rookPositions;
+    // hightlightCells(rookMovement(piecePos));
+  }
+  //Queen
+  if (piece == "Queen") {
+    let move1 = bishopMovement(piecePos);
+    let move2 = rookMovement(piecePos);
+    let queenPositions = move1.concat(move2);
+    // hightlightCells(queenPositions);
+    return queenPositions;
+  }
+  //King
+  if (piece == "King") {
+    let kingPositions = kingMovement(piecePos);
+    return kingPositions;
+  }
+}
+
+//Piece Movement Functions - Determine available positions:
+//Knight Movement
+function knightMovement(pos, X, Y) {
+  //X and Y represent increase or decrease in that plane
+  let arr = pos.split("");
+  let curX = letterNumIdx.indexOf(arr[0]); //Index of the letter
+  let newX = parseInt(curX) + X;
+  let newY = parseInt(arr[1]) + Y;
+  let newid = [letterNumIdx[newX], newY].join("");
+
+  //Checks if new coordinates is out of range
+  if (0 > newX || newX > 7 || 1 > newY || newY > 8) {
+    return;
+  }
+
+  //Return new coordinate
+  return newid;
+}
+
+//Bishop Movement
+function bishopMovement(pos) {
+  let bishopPositions = [];
+  let arr = pos.split("");
+  let curX = letterNumIdx.indexOf(arr[0]); //Index of the letter
+  let curY = arr[1];
+  let refY = parseInt(curY);
+
+  let pClass = pieceColor(pos);
+
+  //Top Right Side
+  for (let row = curX; row < 8; row++) {
+    //Check for Range Limit
+    if (row >= 7 || refY >= 8) {
+      break;
+    }
+    let newRow = row + 1;
+    let newCol = refY + 1;
+    let newid = [letterNumIdx[newRow], newCol].join("");
+
+    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+      bishopPositions.push(newid);
+      break;
+    }else if(document.getElementById(newid).innerText !=""){
+      break;
+    }
+
+    refY++;
+    bishopPositions.push(newid);
+  }
+
+  refY = parseInt(curY);
+  //Top Left Side
+  for (let x = curX; x >= 0; x--) {
+    //Check for Range Limit
+    if (x <= 0 || refY >= 8) {
+      break;
+    }
+    let newRow = parseInt(x) - 1;
+    let newCol = refY + 1;
+    let newid = [letterNumIdx[newRow], newCol].join("");
+
+    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+      bishopPositions.push(newid);
+      break;
+    }else if(document.getElementById(newid).innerText !=""){
+      break;
+    }
+    refY++;
+    bishopPositions.push(newid);
+  }
+
+  //Bottom Right Side
+  refY = parseInt(curY);
+  for (let x = curX; x < 8; x++) {
+    //Check for Range Limit
+    if (x >= 7 || refY <= 1) {
+      break;
+    }
+    let newRow = parseInt(x) + 1;
+    let newCol = refY - 1;
+    let newid = [letterNumIdx[newRow], newCol].join("");
+
+    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+      bishopPositions.push(newid);
+      break;
+    }else if(document.getElementById(newid).innerText !=""){
+      break;
+    }
+
+    refY--;
+    bishopPositions.push(newid);
+  }
+
+  //Bottom Left Side
+  refY = parseInt(curY);
+  for (let x = curX; x >= 0; x--) {
+    //Check for Range Limit
+    if (x <= 0 || refY <= 1) {
+      break;
+    }
+    let newRow = parseInt(x) - 1;
+    let newCol = refY - 1;
+    let newid = [letterNumIdx[newRow], newCol].join("");
+
+    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+      bishopPositions.push(newid);
+      break;
+    }else if(document.getElementById(newid).innerText !=""){
+      break;
+    }
+
+    refY--;
+    bishopPositions.push(newid);
+  }
+  return bishopPositions;
+}
 
 //Rock Movement
 function rookMovement(pos) {
-    let rookPositions = [];
-    let arr = pos.split("");
-    let curX = letterNumIdx.indexOf(arr[0]);
-    let curY = parseInt(arr[1]);
-  
-    //Top
-    for (let y = curY + 1; y < 9; y++) {
-      let newid = [arr[0], y].join("");
+  let rookPositions = [];
+  let pClass = pieceColor(pos);
+  let arr = pos.split("");
+  let curX = letterNumIdx.indexOf(arr[0]);
+  let curY = parseInt(arr[1]);
+
+  //Top
+  for (let y = curY + 1; y < 9; y++) {
+    let newid = [arr[0], y].join("");
+    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
       rookPositions.push(newid);
+      break;
+    }else if(document.getElementById(newid).innerText !=""){
+      break;
     }
-    //Bottom
-    for (let y = curY - 1; y > 0; y--) {
-      let newid = [arr[0], y].join("");
-      rookPositions.push(newid);
-    }
-    //Right
-    for (let x = curX + 1; x < 8; x++) {
-      let newid = [letterNumIdx[x], curY].join("");
-      rookPositions.push(newid);
-    }
-    //Left
-    for (let x = curX - 1; x >= 0; x--) {
-      let newid = [letterNumIdx[x], curY].join("");
-      rookPositions.push(newid);
-    }
-    console.log(rookPositions) //Logs all possible positions in a single array
-    return rookPositions
+    rookPositions.push(newid);
   }
+  //Bottom
+  for (let y = curY - 1; y > 0; y--) {
+    let newid = [arr[0], y].join("");
+    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+      rookPositions.push(newid);
+      break;
+    }else if(document.getElementById(newid).innerText !=""){
+      break;
+    }
+    rookPositions.push(newid);
+  }
+  //Right
+  for (let x = curX + 1; x < 8; x++) {
+    let newid = [letterNumIdx[x], curY].join("");
+    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+      rookPositions.push(newid);
+      break;
+    }else if(document.getElementById(newid).innerText !=""){
+      break;
+    }
+    rookPositions.push(newid);
+  }
+  //Left
+  for (let x = curX - 1; x >= 0; x--) {
+    let newid = [letterNumIdx[x], curY].join("");
+    if(!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).innerHTML!=""){
+      rookPositions.push(newid);
+      break;
+    }else if(document.getElementById(newid).innerText !=""){
+      break;
+    }
+    rookPositions.push(newid);
+  }
+  // console.log(rookPositions) //Logs all possible positions in a single array
+  return rookPositions;
+}
 
 //King Movement
 function kingMovement(pos) {
-    let initialPos = [];
-    let arr = pos.split("");
-    let curX = letterNumIdx.indexOf(arr[0]); //Index of the letter
-    let curY = parseInt(arr[1]);
-  
-    let right = curX + 1;
-    let left = curX - 1;
-    let up = curY + 1;
-    let down = curY - 1;
-  
-    if(right>7){
-      right = undefined;
-    }
-    if(left<0){
-      left = undefined;
-    }
-    if(up>8){
-      up = undefined;
-    }
-    if(down<1){
-      down = undefined;
-    }
-    
-    let moveUp = [letterNumIdx[curX], up].join("");
-    let moveDown = [letterNumIdx[curX], down].join("");
-    let moveRight = [letterNumIdx[right],curY].join("");
-    let moveLeft = [letterNumIdx[left],curY].join("");
-    let upRight = [letterNumIdx[right], up].join("");
-    let upLeft = [letterNumIdx[left], up].join("");
-    let downRight = [letterNumIdx[right], down].join("");
-    let downLeft = [letterNumIdx[left], down].join("");
-  
-    initialPos.push(moveUp,moveDown,moveRight, moveLeft, upRight,upLeft,downRight,downLeft);
-  
-    //Filters for legal cells available
-    let kingPositions = initialPos.filter(function(el){
-      return el.length > 1;
-    })
-    
-    console.log(kingPositions);
+  let initialPos = [];
+  let arr = pos.split("");
+  let curX = letterNumIdx.indexOf(arr[0]); //Index of the letter
+  let curY = parseInt(arr[1]);
+
+  let right = curX + 1;
+  let left = curX - 1;
+  let up = curY + 1;
+  let down = curY - 1;
+
+  if (right > 7) {
+    right = undefined;
+  }
+  if (left < 0) {
+    left = undefined;
+  }
+  if (up > 8) {
+    up = undefined;
+  }
+  if (down < 1) {
+    down = undefined;
   }
 
+  let moveUp = [letterNumIdx[curX], up].join("");
+  let moveDown = [letterNumIdx[curX], down].join("");
+  let moveRight = [letterNumIdx[right], curY].join("");
+  let moveLeft = [letterNumIdx[left], curY].join("");
+  let upRight = [letterNumIdx[right], up].join("");
+  let upLeft = [letterNumIdx[left], up].join("");
+  let downRight = [letterNumIdx[right], down].join("");
+  let downLeft = [letterNumIdx[left], down].join("");
+
+  initialPos.push(
+    moveUp,
+    moveDown,
+    moveRight,
+    moveLeft,
+    upRight,
+    upLeft,
+    downRight,
+    downLeft
+  );
+
+  //Filters for legal cells available
+  let kingPositions = initialPos.filter(function (el) {
+    return el.length > 1;
+  });
+
+  return kingPositions;
+}
+
+function convertPosition(id) {
+  return id.split("");
+}
+
+//////////////////////////
+//////////////////////////
+
+function movePiece(e) {
+  let newPos = [];
+  let piece = e.target.innerText;
+  let pClass = e.target.classList;
+  let piecePos = e.target.id;
+
+  console.log(e.target);
+  console.dir(e.target);
+
+  //Case 1 - First click on a piece
+  //Updates trigger variable
+  if (activeCell === false && piece != "") {
+    //Checks what the active cell color is - white or black
+    if (pClass.contains("White")) {
+      activePieceClass = "White";
+    } else if (pClass.contains("Black")) {
+      activePieceClass = "Black";
+    }
+    activeCell = true;
+    e.target.classList.add("active");
+    activePieceText = piece;
+    activePiecePos = piecePos;
+
+    piecePositions = pieceMovement(piece, pClass, piecePos);
+    legalMoves = checkForPieces(piecePositions, activePieceClass);
+    hightlightCells(legalMoves);
+  } else if (activeCell === true && !pClass.contains(activePieceClass)) {
+    if (legalMoves.includes(piecePos)) {
+      //Case 2 - Clicked onto another spot or opposite piece
+      e.target.innerText = activePieceText;
+      pClass.remove('White','Black');
+      pClass.add(activePieceClass);
+
+      //Clear Cached Previous Piece Position and Values
+      activeCell = false;
+      document.getElementById(activePiecePos).innerText = "";
+      document
+        .getElementById(activePiecePos)
+        .classList.remove("active", "Black", "White");
+      clearHighlights(legalMoves);
+      activePieceText = "";
+      activePiecePos = "";
+      activePieceClass = "";
+      piecePositions = "";
+      legalMoves = "";
+    }
+  } else if (activeCell === true && pClass.contains(activePieceClass)) {
+    activeCell = false;
+    activePieceClass = '';
+    clearHighlights(legalMoves);
+  }
+}
+
+//Use to add images of the pieces into elements
+function addImage() {
+  document.querySelectorAll('.cell').forEach(el => {
+    if(el.innerText == 'Pawn' && el.classList.contains('White')){
+      // el.innerHTML = `<img src="img/Wpawn.png">`;
+      // el.style.backgroundImage = "url('img/Wpawn.png')";
+    }
+  })
   
-function convertPosition(id){
-    return id.split("");
+}
+// addImage();
+
+function hightlightCells(arr) {
+  arr.forEach((pos) => {
+    document.getElementById(pos).style.backgroundColor = "Green";
+  });
+}
+
+function clearHighlights(arr) {
+  arr.forEach((pos) => {
+    document.getElementById(pos).style.backgroundColor = "";
+  });
+}
+
+//Returns the color of the piece (White or black)
+function pieceColor(pos){
+  let pieceColor ='';
+  if(document.getElementById(pos).classList.contains('White')){
+    pieceColor = 'White'
+  } else if(document.getElementById(pos).classList.contains('Black')){
+    pieceColor = 'Black'
+  }
+  return pieceColor
+}
+
+
+//Checks if there are any pieces within the given array
+function checkForPieces(arr, pClass) {
+  let newPos = [];
+  arr.forEach(function (pos) {
+    if (
+      document.getElementById(pos).innerText === "" ||
+      !document.getElementById(pos).classList.contains(pClass)
+    ) {
+      newPos.push(pos);
+    }
+  });
+
+  console.log(pClass)
+  console.log("These are the new positions: " + newPos);
+  return newPos;
 }
 
 //Special Functions
