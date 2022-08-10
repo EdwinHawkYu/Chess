@@ -1,9 +1,9 @@
 console.log("Connected!");
-//Global Variables
+//////Global Variables/////
 //Letter to number Index
 let chessboard = document.getElementById("board");
 let letterNumIdx = ["A", "B", "C", "D", "E", "F", "G", "H"];
-let playerTurn = ['White','Black']; //Index 0 : White, Index 1 : Black
+let playerTurn = true; //true : White, false : Black
 let checkStatus = false;
 let activeCell = false;
 let activePieceText = "";
@@ -33,19 +33,14 @@ function createBoard() {
   }
 }
 
-//Event Listeners
-// chessboard.addEventListener('click', playerClick); //Used for testing purposes ---To be deleted afterwards
-// chessboard.addEventListener('click',pieceMovement);
+//////Event Listeners////
+// chessboard.addEventListener('click',pieceMovement); ~~ To be deleted afterwards
 chessboard.addEventListener("click", movePiece);
 
-//Functions
+//////Functions/////
 
-function playerClick(e) {
-  let currentPosition = e.target.id;
-  console.log(e.target);
-  console.dir(e.target);
-  console.log("Player Clicked on " + currentPosition);
-}
+//Determines Player Turns (White or Black)
+function updateColor(playerTurn) {return playerTurn ? 'White' : 'Black'}
 
 //Set starting positions
 function setBoard() {
@@ -54,15 +49,21 @@ function setBoard() {
   document.getElementById("D1").innerText = "Queen";
   document.getElementById("E8").innerText = "King";
   document.getElementById("D8").innerText = "Queen";
+  document.getElementById("E1").dataset.name = "King";
+  document.getElementById("D1").dataset.name = "Queen";
+  document.getElementById("E8").dataset.name = "King";
+  document.getElementById("D8").dataset.name = "Queen";
 
   //Set Pawns
   for (i = 0; i < 8; i++) {
     if (document.getElementById(letterNumIdx[i] + "2")) {
       document.getElementById(letterNumIdx[i] + "2").innerText = "Pawn";
+      document.getElementById(letterNumIdx[i] + "2").dataset.name = "Pawn";
       document.getElementById(letterNumIdx[i] + "2").classList.add("White");
     }
     if (document.getElementById(letterNumIdx[i] + "7")) {
       document.getElementById(letterNumIdx[i] + "7").innerText = "Pawn";
+      document.getElementById(letterNumIdx[i] + "7").dataset.name = "Pawn";
       document.getElementById(letterNumIdx[i] + "7").classList.add("Black");
     }
   }
@@ -76,12 +77,27 @@ function setBoard() {
   document.getElementById("F8").innerText = "Bishop";
   document.getElementById("B8").innerText = "Knight";
   document.getElementById("G8").innerText = "Knight";
+  //Set Knights and Bishops (Dataset)
+  document.getElementById("C1").dataset.name = "Bishop";
+  document.getElementById("F1").dataset.name = "Bishop";
+  document.getElementById("B1").dataset.name = "Knight";
+  document.getElementById("G1").dataset.name = "Knight";
+  document.getElementById("C8").dataset.name = "Bishop";
+  document.getElementById("F8").dataset.name = "Bishop";
+  document.getElementById("B8").dataset.name = "Knight";
+  document.getElementById("G8").dataset.name = 'Knight';
+  //
 
   //Set Rooks
   document.getElementById("A1").innerText = "Rook";
   document.getElementById("A8").innerText = "Rook";
   document.getElementById("H1").innerText = "Rook";
   document.getElementById("H8").innerText = "Rook";
+  //Set Rooks (Dataset)
+  document.getElementById("H8").dataset.name = "Rook";  
+  document.getElementById("A1").dataset.name = "Rook";
+  document.getElementById("A8").dataset.name = "Rook";
+  document.getElementById("H1").dataset.name = "Rook";
 
   //Set white and black class
   for (let row = 0; row < 9; row++) {
@@ -96,9 +112,6 @@ function setBoard() {
 
 function pieceMovement(piece, pClass, piecePos) {
   let newPos = [];
-  // let piece = e.target.innerText;
-  // let pClass = e.target.classList;
-  // let piecePos = e.target.id;
 
   //Pawn
   if (piece === "Pawn" && pClass.contains("White")) {
@@ -218,9 +231,9 @@ function pieceMovement(piece, pClass, piecePos) {
   }
 }
 
-//Piece Movement Functions - Determine available positions:
+////Piece Movement Functions - Determine available positions:////
 
-//Pawn take piece movement
+//Pawn diagonal take piece movement
 function returnDia(pos, color, dir) {
   let takePositions = [];
   let arr = pos.split("");
@@ -260,7 +273,6 @@ function returnDia(pos, color, dir) {
     var diagonalRight = [letterNumIdx[right], down].join("");
     takePositions.push(diagonalRight);
   }
-  console.log(takePositions);
   return takePositions;
 }
 
@@ -513,6 +525,73 @@ function kingMovement(pos) {
   return kingPositions;
 }
 
+//Move pieces by selecting and clicking on legal cells
+function movePiece(e) {
+  let playerColor = updateColor(playerTurn);
+  let piece = e.target.innerText;
+  let pClass = e.target.classList;
+  let piecePos = e.target.id;
+
+  console.log(e.target);
+  console.dir(e.target);
+
+  //Case 1 - First click on a piece
+  //Updates trigger variable
+  if (activeCell === false && piece != "" && pClass.contains(playerColor)) {
+    //Checks what the active cell color is - white or black
+    if (pClass.contains("White")) {
+      activePieceClass = "White";
+    } else if (pClass.contains("Black")) {
+      activePieceClass = "Black";
+    }
+    activeCell = true;
+    e.target.classList.add("active");
+    activePieceText = piece;
+    activePiecePos = piecePos;
+
+    piecePositions = pieceMovement(piece, pClass, piecePos);
+    legalMoves = checkForPieces(piecePositions, activePieceClass);
+    hightlightCells(legalMoves);
+  } else if (activeCell === true && !pClass.contains(activePieceClass)) {
+    if (legalMoves.includes(piecePos)) {
+      console.log(piece)
+      //If king is moved - saved details
+      if(activePieceClass === 'White' && activePieceText === 'King'){
+        whiteKing = piecePos;
+      } else if(activePieceClass === 'Black' && activePieceText === 'King'){
+        blackKing = piecePos;
+      }
+
+      //Case 2 - Clicked onto another spot or opposite piece
+      e.target.innerText = activePieceText;
+      pClass.remove("White", "Black");
+      pClass.add(activePieceClass);
+
+      //Clear Cached Previous Piece Position and Values
+      activeCell = false;
+      document.getElementById(activePiecePos).innerText = "";
+      document
+        .getElementById(activePiecePos)
+        .classList.remove("active", "Black", "White");
+      clearHighlights(legalMoves);
+      activePieceText = "";
+      activePiecePos = "";
+      activePieceClass = "";
+      piecePositions = "";
+      legalMoves = "";
+      playerTurn = !playerTurn;
+      playerColor = updateColor(playerTurn);
+      document.querySelector('h2').innerText = playerColor+" Player's Turn"; //Update player turn 
+    }
+  } else if (activeCell === true && pClass.contains(activePieceClass)) {
+    activeCell = false;
+    activePieceClass = "";
+    clearHighlights(legalMoves);
+  } 
+    inCheck(whiteKing,'White');
+    inCheck(blackKing,'Black');
+
+}
 
 //King is in Check
 function inCheck(pos, color){
@@ -586,10 +665,10 @@ function inCheck(pos, color){
     }
   })
 
-
   inCheckHighlight(pos)
-
 }
+
+//////Misc Functions//////
 
 function inCheckHighlight(pos){
 
@@ -604,78 +683,6 @@ function inCheckHighlight(pos){
 
 function convertPosition(id) {
   return id.split("");
-}
-
-//Move pieces by selecting and clicking on legal cells
-
-function movePiece(e) {
-  let newPos = [];
-  let piece = e.target.innerText;
-  let pClass = e.target.classList;
-  let piecePos = e.target.id;
-
-  console.log(e.target);
-  console.dir(e.target);
-
-  //Case 1 - First click on a piece
-  //Updates trigger variable
-  if (activeCell === false && piece != "") {
-    //Checks what the active cell color is - white or black
-    if (pClass.contains("White")) {
-      activePieceClass = "White";
-    } else if (pClass.contains("Black")) {
-      activePieceClass = "Black";
-    }
-    activeCell = true;
-    e.target.classList.add("active");
-    activePieceText = piece;
-    activePiecePos = piecePos;
-
-    piecePositions = pieceMovement(piece, pClass, piecePos);
-    legalMoves = checkForPieces(piecePositions, activePieceClass);
-    hightlightCells(legalMoves);
-  } else if (activeCell === true && !pClass.contains(activePieceClass)) {
-    if (legalMoves.includes(piecePos)) {
-
-      //If king is moved - saved details
-      if(activePieceClass === 'White' && activePieceText === 'King'){
-        console.log('Moving White King')
-        whiteKing = piecePos;
-      } else if(activePieceClass === 'Black' && activePieceText === 'King'){
-        console.log('Moving Black King')
-        blackKing = piecePos;
-      }
-
-      //Case 2 - Clicked onto another spot or opposite piece
-      e.target.innerText = activePieceText;
-      pClass.remove("White", "Black");
-      pClass.add(activePieceClass);
-
-      //Clear Cached Previous Piece Position and Values
-      activeCell = false;
-      document.getElementById(activePiecePos).innerText = "";
-      document
-        .getElementById(activePiecePos)
-        .classList.remove("active", "Black", "White");
-      clearHighlights(legalMoves);
-      activePieceText = "";
-      activePiecePos = "";
-      activePieceClass = "";
-      piecePositions = "";
-      legalMoves = "";
-    }
-  } else if (activeCell === true && pClass.contains(activePieceClass)) {
-    activeCell = false;
-    activePieceClass = "";
-    clearHighlights(legalMoves);
-  }
-
-    console.log('Whiteking: '+whiteKing);
-    console.log('BlackKing: '+blackKing);
-    console.log(piecePos)
-    inCheck(whiteKing,'White');
-    inCheck(blackKing,'Black');
-
 }
 
 //Use to add images of the pieces into elements
@@ -723,13 +730,11 @@ function checkForPieces(arr, pClass) {
       newPos.push(pos);
     }
   });
-
-  console.log(pClass);
   console.log("These are the new positions: " + newPos);
   return newPos;
 }
 
-//Special Functions
+////Special Functions////
 //Starting Pawn - Double Square
 //Pawn Promotes
 //King-Rook Castle
