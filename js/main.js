@@ -3,6 +3,8 @@ console.log("Connected!");
 //Letter to number Index
 let chessboard = document.getElementById("board");
 let letterNumIdx = ["A", "B", "C", "D", "E", "F", "G", "H"];
+let playerTurn = ['White','Black']; //Index 0 : White, Index 1 : Black
+let checkStatus = false;
 let activeCell = false;
 let activePieceText = "";
 let activePiecePos = "";
@@ -12,6 +14,8 @@ let blackMoves = [];
 //Used in moving the pieces
 let piecePositions = "";
 let legalMoves = "";
+let blackKing = "E8";
+let whiteKing = "E1";
 
 //Calling Functions
 createBoard();
@@ -112,19 +116,16 @@ function pieceMovement(piece, pClass, piecePos) {
     let upRight = returnDia(piecePos, "White", "right").join("");
     let upLeft = returnDia(piecePos, "White", "left").join("");
 
-    if (
-      document.getElementById(upRight).innerText != "" &&
-      document.getElementById(upRight).classList.contains("Black")
-    ) {
+  if(upRight.length > 1){
+    if (document.getElementById(upRight).innerText != "" && document.getElementById(upRight).classList.contains("Black")) {
       newid.push(upRight);
     }
-    if (
-      document.getElementById(upLeft).innerText != "" &&
-      document.getElementById(upLeft).classList.contains("Black")
-    ) {
+  }
+  if(upLeft.length > 1){
+    if (document.getElementById(upLeft).innerText != "" && document.getElementById(upLeft).classList.contains("Black")) {
       newid.push(upLeft);
     }
-
+  }
     //First pawn move - 2 squares
     if (parseInt(currentPos[1]) === 2) {
       newPos = [];
@@ -132,7 +133,10 @@ function pieceMovement(piece, pClass, piecePos) {
       newPos.push(parseInt(currentPos[1]) + 2);
       newid.push(newPos.join(""));
     }
-    return newid;
+    let pawnPositions = newid.filter(function (el){
+      return el.length > 1;
+    })
+    return pawnPositions;
   }
 
   if (piece === "Pawn" && pClass.contains("Black")) {
@@ -148,20 +152,16 @@ function pieceMovement(piece, pClass, piecePos) {
     //Diagonal Pawn Takes
     let downRight = returnDia(piecePos, "Black", "right").join("");
     let downLeft = returnDia(piecePos, "Black", "left").join("");
-
-    if (
-      document.getElementById(downRight).innerText != "" &&
-      document.getElementById(downRight).classList.contains("White")
-    ) {
+  if(downRight.length > 1){
+    if (document.getElementById(downRight).innerText != "" && document.getElementById(downRight).classList.contains("White")) {
       newid.push(downRight);
     }
-    if (
-      document.getElementById(downLeft).innerText != "" &&
-      document.getElementById(downLeft).classList.contains("White")
-    ) {
+  }
+  if(downLeft.length > 1){
+    if (document.getElementById(downLeft).innerText != "" && document.getElementById(downLeft).classList.contains("White")) {
       newid.push(downLeft);
     }
-
+  }
     if (parseInt(currentPos[1]) === 7) {
       newPos = [];
       newPos.push(currentPos[0]);
@@ -203,14 +203,12 @@ function pieceMovement(piece, pClass, piecePos) {
   if (piece == "Rook") {
     let rookPositions = rookMovement(piecePos);
     return rookPositions;
-    // hightlightCells(rookMovement(piecePos));
   }
   //Queen
   if (piece == "Queen") {
     let move1 = bishopMovement(piecePos);
     let move2 = rookMovement(piecePos);
     let queenPositions = move1.concat(move2);
-    // hightlightCells(queenPositions);
     return queenPositions;
   }
   //King
@@ -265,50 +263,6 @@ function returnDia(pos, color, dir) {
   console.log(takePositions);
   return takePositions;
 }
-/*
-function pawnTakes(pos, color) {
-  let takePositions = [];
-  let arr = pos.split("");
-  let curX = letterNumIdx.indexOf(arr[0]);
-  let curY = parseInt(arr[1]);
-  let up = curY + 1;
-  let down = curY - 1;
-  let right = curX + 1;
-  let left = curX - 1;
-
-  if (right > 7) {
-    right = undefined;
-  }
-  if (left < 0) {
-    left = undefined;
-  }
-  if (up > 8) {
-    up = undefined;
-  }
-  if (down < 1) {
-    down = undefined;
-  }
-
-  if (color === 'White') {
-    var diagonalRight = [letterNumIdx[right], up].join("");
-    var diagonalLeft = [letterNumIdx[left], up].join("");
-    takePositions.push(diagonalRight, diagonalLeft);
-  }
-
-  if (color === 'Black') {
-    var diagonalRight = [letterNumIdx[right], down].join("");
-    var diagonalLeft = [letterNumIdx[left], down].join("");
-    takePositions.push(diagonalRight, diagonalLeft);
-  }
-
-  let pawnPositions = takePositions.filter(function(el) {
-    return el.length > 1;
-  })
-
-  return pawnPositions;
-}
-
-*/
 
 //Knight Movement
 function knightMovement(pos, X, Y) {
@@ -559,6 +513,95 @@ function kingMovement(pos) {
   return kingPositions;
 }
 
+
+//King is in Check
+function inCheck(pos, color){
+
+  let linearPos = rookMovement(pos); //Rook and Queen Checks
+  let diagonalPos = bishopMovement(pos); //Bishop and Queen Checks
+  let knightPos, pawnPos = [];
+
+  //Pawn checks
+  if(color === 'White'){
+    pawnPos.push(returnDia(pos, 'White', 'right'));
+    pawnPos.push(returnDia(pos, 'White', 'left'));
+  }
+  if(color === 'Black'){
+    pawnPos.push(returnDia(pos, 'Black', 'right'));
+    pawnPos.push(returnDia(pos, 'Black', 'left'));
+  }
+
+  //Possible Knight Checks
+  if (true) {
+    possiblePos = [];
+    //Top
+    possiblePos.push(knightMovement(pos, 1, 2));
+    possiblePos.push(knightMovement(pos, -1, 2));
+    //Bottom
+    possiblePos.push(knightMovement(pos, 1, -2));
+    possiblePos.push(knightMovement(pos, -1, -2));
+     //Right
+    possiblePos.push(knightMovement(pos, 2, 1));
+    possiblePos.push(knightMovement(pos, 2, -1));
+     //Left
+    possiblePos.push(knightMovement(pos, -2, 1));
+    possiblePos.push(knightMovement(pos, -2, -1));
+
+    knightPos = possiblePos.filter(function (el) {
+      return el !== undefined;
+    });
+  }
+
+  checkStatus = false;
+
+  linearPos.forEach(function(el){
+    if(!document.getElementById(el).classList.contains(color) && (document.getElementById(el).innerText === 'Rook' || document.getElementById(el).innerText === 'Queen')){
+      console.log('Check1')
+      checkStatus = true;
+      return;
+      }
+  })
+
+  diagonalPos.forEach(function(el){
+    if(document.getElementById(el).innerText === 'Bishop' || document.getElementById(el).innerText === 'Queen'){
+      console.log('Check2')
+      checkStatus = true;
+      return;
+      }
+  })
+
+  knightPos.forEach(function(el){
+    if(document.getElementById(el).innerText === 'Knight' && !document.getElementById(el).classList.contains(color)){
+      console.log('Check3')
+      checkStatus = true;
+      return;
+      }
+  })
+
+  pawnPos.forEach(function(el){
+    if(document.getElementById(el).innerText === 'Pawn' && !document.getElementById(el).classList.contains(color)){
+      console.log('Check4')
+      checkStatus = true;
+      return;
+    }
+  })
+
+
+  inCheckHighlight(pos)
+
+}
+
+function inCheckHighlight(pos){
+
+  if(checkStatus === true){
+    document.getElementById(pos).style.backgroundColor = 'red';
+    return;
+  } else if (checkStatus === false){
+    document.getElementById(pos).style.backgroundColor = '';
+  }
+
+}
+
 function convertPosition(id) {
   return id.split("");
 }
@@ -593,6 +636,16 @@ function movePiece(e) {
     hightlightCells(legalMoves);
   } else if (activeCell === true && !pClass.contains(activePieceClass)) {
     if (legalMoves.includes(piecePos)) {
+
+      //If king is moved - saved details
+      if(activePieceClass === 'White' && activePieceText === 'King'){
+        console.log('Moving White King')
+        whiteKing = piecePos;
+      } else if(activePieceClass === 'Black' && activePieceText === 'King'){
+        console.log('Moving Black King')
+        blackKing = piecePos;
+      }
+
       //Case 2 - Clicked onto another spot or opposite piece
       e.target.innerText = activePieceText;
       pClass.remove("White", "Black");
@@ -616,6 +669,13 @@ function movePiece(e) {
     activePieceClass = "";
     clearHighlights(legalMoves);
   }
+
+    console.log('Whiteking: '+whiteKing);
+    console.log('BlackKing: '+blackKing);
+    console.log(piecePos)
+    inCheck(whiteKing,'White');
+    inCheck(blackKing,'Black');
+
 }
 
 //Use to add images of the pieces into elements
