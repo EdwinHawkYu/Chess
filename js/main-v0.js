@@ -29,7 +29,6 @@ function createBoard() {
       let newCell = document.createElement("div");
       newCell.id = letterNumIdx[j] + i;
       newCell.classList.add("cell");
-      newCell.dataset.name = "";
       // newCell.style.backgroundColor = color;
       chessboard.append(newCell);
     }
@@ -54,10 +53,10 @@ function updateColor(playerTurn) {return playerTurn ? 'White' : 'Black'}
 //Set starting positions
 function setBoard() {
   //Set Kings and Queen
-  // document.getElementById("E1").innerText = "King";
-  // document.getElementById("D1").innerText = "Queen";
-  // document.getElementById("E8").innerText = "King";
-  // document.getElementById("D8").innerText = "Queen";
+  document.getElementById("E1").innerText = "King";
+  document.getElementById("D1").innerText = "Queen";
+  document.getElementById("E8").innerText = "King";
+  document.getElementById("D8").innerText = "Queen";
   document.getElementById("E1").dataset.name = "King";
   document.getElementById("D1").dataset.name = "Queen";
   document.getElementById("E8").dataset.name = "King";
@@ -66,26 +65,26 @@ function setBoard() {
   //Set Pawns
   for (i = 0; i < 8; i++) {
     if (document.getElementById(letterNumIdx[i] + "2")) {
-      // document.getElementById(letterNumIdx[i] + "2").innerText = "Pawn";
+      document.getElementById(letterNumIdx[i] + "2").innerText = "Pawn";
       document.getElementById(letterNumIdx[i] + "2").dataset.name = "Pawn";
       document.getElementById(letterNumIdx[i] + "2").classList.add("White");
     }
     if (document.getElementById(letterNumIdx[i] + "7")) {
-      // document.getElementById(letterNumIdx[i] + "7").innerText = "Pawn";
+      document.getElementById(letterNumIdx[i] + "7").innerText = "Pawn";
       document.getElementById(letterNumIdx[i] + "7").dataset.name = "Pawn";
       document.getElementById(letterNumIdx[i] + "7").classList.add("Black");
     }
   }
 
   //Set Knights and Bishops
-  // document.getElementById("C1").innerText = "Bishop";
-  // document.getElementById("F1").innerText = "Bishop";
-  // document.getElementById("B1").innerText = "Knight";
-  // document.getElementById("G1").innerText = "Knight";
-  // document.getElementById("C8").innerText = "Bishop";
-  // document.getElementById("F8").innerText = "Bishop";
-  // document.getElementById("B8").innerText = "Knight";
-  // document.getElementById("G8").innerText = "Knight";
+  document.getElementById("C1").innerText = "Bishop";
+  document.getElementById("F1").innerText = "Bishop";
+  document.getElementById("B1").innerText = "Knight";
+  document.getElementById("G1").innerText = "Knight";
+  document.getElementById("C8").innerText = "Bishop";
+  document.getElementById("F8").innerText = "Bishop";
+  document.getElementById("B8").innerText = "Knight";
+  document.getElementById("G8").innerText = "Knight";
   //Set Knights and Bishops (Dataset)
   document.getElementById("C1").dataset.name = "Bishop";
   document.getElementById("F1").dataset.name = "Bishop";
@@ -98,10 +97,10 @@ function setBoard() {
   //
 
   //Set Rooks
-  // document.getElementById("A1").innerText = "Rook";
-  // document.getElementById("A8").innerText = "Rook";
-  // document.getElementById("H1").innerText = "Rook";
-  // document.getElementById("H8").innerText = "Rook";
+  document.getElementById("A1").innerText = "Rook";
+  document.getElementById("A8").innerText = "Rook";
+  document.getElementById("H1").innerText = "Rook";
+  document.getElementById("H8").innerText = "Rook";
   //Set Rooks (Dataset)
   document.getElementById("H8").dataset.name = "Rook";  
   document.getElementById("A1").dataset.name = "Rook";
@@ -121,7 +120,6 @@ function setBoard() {
 
 function pieceMovement(piece, pClass, piecePos) {
   let newPos = [];
-  let compareValue = '';
 
   //Pawn
   if (piece === "Pawn" && pClass.contains("White")) {
@@ -129,10 +127,9 @@ function pieceMovement(piece, pClass, piecePos) {
     let currentPos = convertPosition(piecePos);
     newPos.push(currentPos[0]);
     newPos.push(parseInt(currentPos[1]) + 1);
-    compareValue = newPos.join("");
 
     //Checks if there is a piece in front of the pawn - if true ~ can't move
-    if (document.getElementById(compareValue).dataset.name === "") {
+    if (document.getElementById(newPos.join("")).innerText === "") {
       newid.push(newPos.join("")); //New position as a string
     }
 
@@ -141,12 +138,12 @@ function pieceMovement(piece, pClass, piecePos) {
     let upLeft = returnDia(piecePos, "White", "left").join("");
 
   if(upRight.length > 1){
-    if (document.getElementById(upRight).dataset.name != "" && document.getElementById(upRight).classList.contains("Black")) {
+    if (document.getElementById(upRight).innerText != "" && document.getElementById(upRight).classList.contains("Black")) {
       newid.push(upRight);
     }
   }
   if(upLeft.length > 1){
-    if (document.getElementById(upLeft).dataset.name != "" && document.getElementById(upLeft).classList.contains("Black")) {
+    if (document.getElementById(upLeft).innerText != "" && document.getElementById(upLeft).classList.contains("Black")) {
       newid.push(upLeft);
     }
   }
@@ -154,8 +151,7 @@ function pieceMovement(piece, pClass, piecePos) {
     testPos = [];
     testPos.push(currentPos[0]);
     testPos.push(parseInt(currentPos[1]) + 2);
-
-    if (parseInt(currentPos[1]) === 2 && document.getElementById(testPos.join("")).dataset.name === '' && document.getElementById(compareValue).dataset.name === '') {
+    if (parseInt(currentPos[1]) === 2 && document.getElementById(testPos.join("")).innerText === '') {
       newPos = [];
       newPos.push(currentPos[0]);
       newPos.push(parseInt(currentPos[1]) + 2);
@@ -172,30 +168,28 @@ function pieceMovement(piece, pClass, piecePos) {
     let currentPos = convertPosition(piecePos);
     newPos.push(currentPos[0]);
     newPos.push(parseInt(currentPos[1]) - 1);
-    compareValue = newPos.join("");
 
     //Checks if there is a piece in front of the pawn - if true ~ can't move
-    if (document.getElementById(newPos.join("")).dataset.name === "") {
+    if (document.getElementById(newPos.join("")).innerText === "") {
       newid.push(newPos.join("")); //New position as a string
     }
     //Diagonal Pawn Takes
     let downRight = returnDia(piecePos, "Black", "right").join("");
     let downLeft = returnDia(piecePos, "Black", "left").join("");
   if(downRight.length > 1){
-    if (document.getElementById(downRight).dataset.name != "" && document.getElementById(downRight).classList.contains("White")) {
+    if (document.getElementById(downRight).innerText != "" && document.getElementById(downRight).classList.contains("White")) {
       newid.push(downRight);
     }
   }
   if(downLeft.length > 1){
-    if (document.getElementById(downLeft).dataset.name != "" && document.getElementById(downLeft).classList.contains("White")) {
+    if (document.getElementById(downLeft).innerText != "" && document.getElementById(downLeft).classList.contains("White")) {
       newid.push(downLeft);
     }
   }
   testPos = [];
   testPos.push(currentPos[0]);
   testPos.push(parseInt(currentPos[1]) - 2);
-  //Pawn 2 square movement
-    if (parseInt(currentPos[1]) === 7 && document.getElementById(testPos.join("")).dataset.name === "" && document.getElementById(compareValue).dataset.name === "") {
+    if (parseInt(currentPos[1]) === 7 && document.getElementById(testPos.join("")).innerText === "") {
       newPos = [];
       newPos.push(currentPos[0]);
       newPos.push(parseInt(currentPos[1]) - 2);
@@ -335,10 +329,13 @@ function bishopMovement(pos) {
     let newCol = refY + 1;
     let newid = [letterNumIdx[newRow], newCol].join("");
 
-    if (!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).dataset.name != "") {
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       bishopPositions.push(newid);
       break;
-    } else if (document.getElementById(newid).dataset.name != "") {
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
 
@@ -357,10 +354,13 @@ function bishopMovement(pos) {
     let newCol = refY + 1;
     let newid = [letterNumIdx[newRow], newCol].join("");
 
-    if (!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).dataset.name != "") {
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       bishopPositions.push(newid);
       break;
-    } else if (document.getElementById(newid).dataset.name != "") {
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
     refY++;
@@ -378,10 +378,13 @@ function bishopMovement(pos) {
     let newCol = refY - 1;
     let newid = [letterNumIdx[newRow], newCol].join("");
 
-    if (!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).dataset.name != "") {
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       bishopPositions.push(newid);
       break;
-    } else if (document.getElementById(newid).dataset.name != "") {
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
 
@@ -400,10 +403,13 @@ function bishopMovement(pos) {
     let newCol = refY - 1;
     let newid = [letterNumIdx[newRow], newCol].join("");
 
-    if (!document.getElementById(newid).classList.contains(pClass) && document.getElementById(newid).dataset.name != "") {
+    if (
+      !document.getElementById(newid).classList.contains(pClass) &&
+      document.getElementById(newid).innerHTML != ""
+    ) {
       bishopPositions.push(newid);
       break;
-    } else if (document.getElementById(newid).dataset.name != "") {
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
 
@@ -426,11 +432,11 @@ function rookMovement(pos) {
     let newid = [arr[0], y].join("");
     if (
       !document.getElementById(newid).classList.contains(pClass) &&
-      document.getElementById(newid).dataset.name != ""
+      document.getElementById(newid).innerHTML != ""
     ) {
       rookPositions.push(newid);
       break;
-    } else if (document.getElementById(newid).dataset.name != "") {
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
     rookPositions.push(newid);
@@ -440,11 +446,11 @@ function rookMovement(pos) {
     let newid = [arr[0], y].join("");
     if (
       !document.getElementById(newid).classList.contains(pClass) &&
-      document.getElementById(newid).dataset.name != ""
+      document.getElementById(newid).innerHTML != ""
     ) {
       rookPositions.push(newid);
       break;
-    } else if (document.getElementById(newid).dataset.name != "") {
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
     rookPositions.push(newid);
@@ -454,11 +460,11 @@ function rookMovement(pos) {
     let newid = [letterNumIdx[x], curY].join("");
     if (
       !document.getElementById(newid).classList.contains(pClass) &&
-      document.getElementById(newid).dataset.name != ""
+      document.getElementById(newid).innerHTML != ""
     ) {
       rookPositions.push(newid);
       break;
-    } else if (document.getElementById(newid).dataset.name != "") {
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
     rookPositions.push(newid);
@@ -468,11 +474,11 @@ function rookMovement(pos) {
     let newid = [letterNumIdx[x], curY].join("");
     if (
       !document.getElementById(newid).classList.contains(pClass) &&
-      document.getElementById(newid).dataset.name != ""
+      document.getElementById(newid).innerHTML != ""
     ) {
       rookPositions.push(newid);
       break;
-    } else if (document.getElementById(newid).dataset.name != "") {
+    } else if (document.getElementById(newid).innerText != "") {
       break;
     }
     rookPositions.push(newid);
@@ -537,9 +543,11 @@ function kingMovement(pos) {
 //Move pieces by selecting and clicking on legal cells
 function movePiece(e) {
   let playerColor = updateColor(playerTurn);
-  let piece = e.target.dataset.name;
+  let piece = e.target.innerText;
   let pClass = e.target.classList;
   let piecePos = e.target.id;
+  // let name = e.target.dataset.name;
+  // let classes = e.target.className;
 
   console.log(e.target);
   console.dir(e.target);
@@ -553,11 +561,11 @@ function movePiece(e) {
     } else if (pClass.contains("Black")) {
       activePieceClass = "Black";
     }
-    //Sets bool that there is activePiece
     activeCell = true;
     e.target.classList.add("active");
     activePieceText = piece;
     activePiecePos = piecePos;
+
     piecePositions = pieceMovement(piece, pClass, piecePos);
     legalMoves = checkForPieces(piecePositions, activePieceClass);
     hightlightCells(legalMoves);
@@ -571,24 +579,22 @@ function movePiece(e) {
       }
 
       //Case 2 - Clicked onto another spot or opposite piece
-      // e.target.innerText = activePieceText;
-      e.target.dataset.name = activePieceText;
+      e.target.innerText = activePieceText;
       pClass.remove("White", "Black");
       pClass.add(activePieceClass);
 
       //Clear Cached Previous Piece Position and Values
       activeCell = false;
-      // document.getElementById(activePiecePos).innerText = "";
-      document.getElementById(activePiecePos).dataset.name = ""; //Deleting old dataset name
-      document.getElementById(activePiecePos).style.backgroundImage = "";
-      document.getElementById(activePiecePos).classList.remove("active", "Black", "White");
+      document.getElementById(activePiecePos).innerText = "";
+      document
+        .getElementById(activePiecePos)
+        .classList.remove("active", "Black", "White");
       clearHighlights(legalMoves);
       activePieceText = "";
       activePiecePos = "";
       activePieceClass = "";
       piecePositions = "";
       legalMoves = "";
-      addImage();
       playerTurn = !playerTurn;
       playerColor = updateColor(playerTurn);
       document.querySelector('h2').innerText = playerColor+" Player's Turn"; //Update player turn 
@@ -656,7 +662,7 @@ function inCheck(pos, color){
   checkStatus = false;
 
   linearPos.forEach(function(el){
-    if(!document.getElementById(el).classList.contains(color) && (document.getElementById(el).dataset.name === 'Rook' || document.getElementById(el).dataset.name === 'Queen')){
+    if(!document.getElementById(el).classList.contains(color) && (document.getElementById(el).innerText === 'Rook' || document.getElementById(el).innerText === 'Queen')){
       console.log('Check1')
       console.log(el)
       checkStatus = true;
@@ -666,7 +672,7 @@ function inCheck(pos, color){
   })
 
   diagonalPos.forEach(function(el){
-    if(document.getElementById(el).dataset.name === 'Bishop' || document.getElementById(el).dataset.name === 'Queen'){
+    if(document.getElementById(el).innerText === 'Bishop' || document.getElementById(el).innerText === 'Queen'){
       console.log('Check2')
       checkStatus = true;
       numAtt++;
@@ -675,7 +681,7 @@ function inCheck(pos, color){
   })
 
   knightPos.forEach(function(el){
-    if(document.getElementById(el).dataset.name === 'Knight' && !document.getElementById(el).classList.contains(color)){
+    if(document.getElementById(el).innerText === 'Knight' && !document.getElementById(el).classList.contains(color)){
       console.log('Check3')
       checkStatus = true;
       numAtt++;
@@ -684,7 +690,7 @@ function inCheck(pos, color){
   })
 
   pawnPos.forEach(function(el){
-    if (document.getElementById(el).dataset.name === 'Pawn' && !document.getElementById(el).classList.contains(color)){
+    if (document.getElementById(el).innerText === 'Pawn' && !document.getElementById(el).classList.contains(color)){
       console.log('Check4')
       checkStatus = true;
       numAtt++;
@@ -743,41 +749,53 @@ function addImage() {
   document.querySelectorAll(".cell").forEach((el) => {
     if(el.classList.contains("White")){
       if (el.dataset.name == "Pawn") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Wpawn.png')";
       }
       if (el.dataset.name == "Knight") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Wknight.png')";
       }
       if (el.dataset.name == "Bishop") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Wbishop.png')";
       }
       if (el.dataset.name == "Rook") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Wrook.png')";
       }
       if (el.dataset.name == "Queen") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Wqueen.png')";
       }
       if (el.dataset.name == "King") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Wking.png')";
       }
     }
     if(el.classList.contains("Black")){
       if (el.dataset.name == "Pawn") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Bpawn.png')";
       }
       if (el.dataset.name == "Knight") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Bknight.png')";
       }
       if (el.dataset.name == "Bishop") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Bbishop.png')";
       }
       if (el.dataset.name == "Rook") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Brook.png')";
       }
       if (el.dataset.name == "Queen") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Bqueen.png')";
       }
       if (el.dataset.name == "King") {
+        // el.innerHTML = `<img src="img/Wpawn.png">`;
         el.style.backgroundImage = "url('img/Bking.png')";
       }
     }
@@ -811,9 +829,10 @@ function pieceColor(pos) {
 //Checks if there are any pieces within the given array
 function checkForPieces(arr, pClass) {
   let newPos = [];
-  // document.getElementById(pos).innerText === "" || 
   arr.forEach(function (pos) {
-    if (document.getElementById(pos).dataset.name === "" || !document.getElementById(pos).classList.contains(pClass)) {
+    if (
+      document.getElementById(pos).innerText === "" || document.getElementById(pos).dataset.name === "" || !document.getElementById(pos).classList.contains(pClass)
+    ) {
       newPos.push(pos);
     }
   });
@@ -822,15 +841,14 @@ function checkForPieces(arr, pClass) {
 }
 
 //Undo previous move (limited to 1 move)
-/////Currently Not in Use//////
 function undo(lastActiveId, lastActiveName, lastActiveClass, lastTargetId, lastTargetName, lastTargetClass){
 
   //Piece Moved
-  // document.getElementById(lastActiveId).innerText = lastActiveName;
+  document.getElementById(lastActiveId).innerText = lastActiveName;
   document.getElementById(lastActiveId).dataset.name = lastActiveName;
   document.getElementById(lastActiveId).className = lastActiveClass;
   //Location of piece moved/taken
-  // document.getElementById(lastTargetId).innerText = lastTargetName;
+  document.getElementById(lastTargetId).innerText = lastTargetName;
   document.getElementById(lastTargetId).dataset.name = lastTargetName;
   document.getElementById(lastTargetId).className = lastTargetClass;
 
