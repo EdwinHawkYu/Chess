@@ -583,6 +583,7 @@ function movePiece(e) {
       piecePositions = "";
       legalMoves = "";
       addImage();
+      e.target.classList.contains('White') ? whiteMoves.push(e.target.dataset.name + ":" +e.target.id):blackMoves.push(e.target.dataset.name + ":" +e.target.id);
       playerTurn = !playerTurn;
       playerColor = updateColor(playerTurn);
       document.querySelector('h2').innerText = playerColor+" Player's Turn"; //Update player turn 
@@ -602,6 +603,7 @@ function movePiece(e) {
     illegalPos = inCheck(blackKing,'Black');
   }
 
+  updateHistory(whiteMoves,blackMoves);
   checkmate();
 
 }
@@ -798,6 +800,11 @@ function clearHighlights(arr) {
   });
 }
 
+function updateHistory(whiteMoves, blackMoves){
+  document.getElementById('white-moves').innerHTML = 'White Moves: '+whiteMoves;
+  document.getElementById('black-moves').innerHTML = 'Black Moves: '+blackMoves;
+}
+
 //Returns the color of the piece (White or black)
 function pieceColor(pos) {
   let pieceColor = "";
@@ -878,7 +885,6 @@ function checkmate(){
   let whitePieces = [];
   let blackPieces = [];
   document.querySelectorAll('.cell').forEach((el) =>{
-    console.log(el.dataset.name)
     if(el.classList.contains('White')){
       whitePieces.push(el.dataset.name);
     }
@@ -905,7 +911,6 @@ function checkmate(){
     chessboard.removeEventListener("click", movePiece);
   }
 }
-
 
 
 // //King-Rook Castle
