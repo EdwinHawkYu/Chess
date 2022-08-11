@@ -2,7 +2,7 @@ body{
     /* display: grid;
     grid-template-columns: repeat(5,1fr);
     grid-template-rows: repeat(3, auto); */
-    background-color: whitesmoke;
+    /* background-color: #1F1B24; */
     text-align: center;
 }
 
@@ -14,7 +14,11 @@ nav{
     grid-column: 1/6;
 }
 
+h1{
+    /* color: white; */
+}
 h2{
+    /* color: white; */
     font-size: 22px;
     margin: 40px;
 }
@@ -41,7 +45,7 @@ h2{
 }
 
 .cell:hover{
-    background-color: rgb(126, 126, 126);
+    background-color: rgb(247, 245, 101);
 }
 
 button{
