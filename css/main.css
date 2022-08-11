@@ -1,8 +1,8 @@
 body{
-    /* display: grid;
-    grid-template-columns: repeat(5,1fr);
-    grid-template-rows: repeat(3, auto); */
-    /* background-color: #1F1B24; */
+    display: grid;
+    grid-template-columns: repeat(4,auto);
+    grid-template-rows: repeat(7, auto); 
+    background-color: #343138;
     text-align: center;
 }
 
@@ -11,16 +11,25 @@ nav{
     flex-direction: row;
     justify-content: center;
     height: 50px;
-    grid-column: 1/6;
+    grid-column: 2/4;
+}
+
+#game-history{
+    grid-column-start: 1;
+    grid-column-end: 2;
+    /* padding-left: 40px; */
+    color: white;
 }
 
 h1{
-    /* color: white; */
+    color: white;
 }
 h2{
-    /* color: white; */
+    color: white;
     font-size: 22px;
     margin: 40px;
+    grid-column-start: 2;
+    grid-column-end: 4;
 }
 
 #board{
@@ -28,6 +37,9 @@ h2{
     margin: auto;
     width: 650px;
     height: 650px;
+    grid-row-start: 3;
+    grid-column-start: 2;
+    grid-column-end: 4;
     grid-template-columns: repeat(8,1fr);
     grid-template-rows: repeat(8,1fr);
     border: 1px solid black;
@@ -44,10 +56,7 @@ h2{
     background-size: cover;
 }
 
-.cell:hover{
-    background-color: rgb(247, 245, 101);
-}
-
 button{
     margin: 50px;
+    grid-column-start: 4;
 }

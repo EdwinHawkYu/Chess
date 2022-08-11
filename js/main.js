@@ -2,6 +2,7 @@ console.log("Connected!");
 //////Global Variables/////
 //Letter to number Index
 let chessboard = document.getElementById("board");
+let restartBtn = document.getElementById("restart");
 let letterNumIdx = ["A", "B", "C", "D", "E", "F", "G", "H"];
 let playerTurn = true; //true : White, false : Black
 let checkStatus = false;
@@ -11,6 +12,8 @@ let activePiecePos = "";
 let activePieceClass = "";
 let whiteMoves = [];
 let blackMoves = [];
+let whiteKingBoard = true;
+let blackKingBoard = true;
 //Used in moving the pieces
 let piecePositions = "";
 let legalMoves = "";
@@ -21,31 +24,37 @@ let limitKing = [];
 //Calling Functions
 createBoard();
 setBoard();
+addImage();
+setColors();
 
 //Create 8x8 board
 function createBoard() {
   for (let i = 8; i > 0; i--) {
     for (let j = 0; j < 8; j++) {
-      // let color = checkerBoard(i,j);
+      let color = checkerBoard(i,j);
       let newCell = document.createElement("div");
       newCell.id = letterNumIdx[j] + i;
       newCell.classList.add("cell");
       newCell.dataset.name = "";
-      // newCell.style.backgroundColor = color;
+      newCell.dataset.backgroundColor = color;
       chessboard.append(newCell);
     }
   }
 }
 
 function checkerBoard(i,j){
+  //#749657 -- Dark Green
+  // #eaedd0 -- Light Yellow/Green
   let sum = i+j;
-  return sum % 2 === 0 ? 'Grey':'';
+  return sum % 2 === 0 ? '#eaedd0':'#749657';
 }
 
 
 //////Event Listeners////
-// chessboard.addEventListener('click',pieceMovement); ~~ To be deleted afterwards
 chessboard.addEventListener("click", movePiece);
+restartBtn.addEventListener("click", restart);
+// chessboard.addEventListener("mouseover", mouseOver);
+// chessboard.addEventListener("mouseout", mouseOut);
 
 //////Functions/////
 
@@ -63,12 +72,10 @@ function setBoard() {
   //Set Pawns
   for (i = 0; i < 8; i++) {
     if (document.getElementById(letterNumIdx[i] + "2")) {
-      // document.getElementById(letterNumIdx[i] + "2").innerText = "Pawn";
       document.getElementById(letterNumIdx[i] + "2").dataset.name = "Pawn";
       document.getElementById(letterNumIdx[i] + "2").classList.add("White");
     }
     if (document.getElementById(letterNumIdx[i] + "7")) {
-      // document.getElementById(letterNumIdx[i] + "7").innerText = "Pawn";
       document.getElementById(letterNumIdx[i] + "7").dataset.name = "Pawn";
       document.getElementById(letterNumIdx[i] + "7").classList.add("Black");
     }
@@ -557,14 +564,12 @@ function movePiece(e) {
       }
 
       //Case 2 - Clicked onto another spot or opposite piece
-      // e.target.innerText = activePieceText;
       e.target.dataset.name = activePieceText;
       pClass.remove("White", "Black");
       pClass.add(activePieceClass);
 
       //Clear Cached Previous Piece Position and Values
       activeCell = false;
-      // document.getElementById(activePiecePos).innerText = "";
       document.getElementById(activePiecePos).dataset.name = ""; //Deleting old dataset name
       document.getElementById(activePiecePos).style.backgroundImage = "";
       document.getElementById(activePiecePos).classList.remove("active", "Black", "White");
@@ -597,11 +602,7 @@ function movePiece(e) {
     illegalPos = inCheck(blackKing,'Black');
   }
 
-  console.log('Illegal Pos: ')
-  console.log(illegalPos)
-  
-  // inCheck(whiteKing, 'White');
-  // inCheck(blackKing,'Black');
+  checkmate();
 
 }
 
@@ -708,17 +709,6 @@ function inCheck(pos, color){
   limitKing = illegalPos[0];
 }
 
-function checkmate(){
-  let color = updateColor(playerTurn);
-  let wMoves = availablePositions('White');
-  let bMoves = availablePositions('Black');
-  console.log(x)
-  if(checkStatus === true){
-    console.log('Checkmate!')
-  }
-
-}
-
 function availablePositions(color){
   let arr = [];
   let board = document.querySelectorAll('.cell');
@@ -733,17 +723,10 @@ function availablePositions(color){
 //////Misc Functions//////
 let oldPos = "";
 function inCheckHighlight(pos){
-
   if(checkStatus === true){
     document.getElementById(pos).style.backgroundColor = 'red';
     return oldPos = pos;
-  } else if (checkStatus === false){
-    document.getElementById(pos).style.backgroundColor = '';
-    if(oldPos != ""){
-    document.getElementById(oldPos).style.backgroundColor = '';
-    }
-  }
-
+  } 
 }
 
 function convertPosition(id) {
@@ -795,17 +778,23 @@ function addImage() {
     }
   });
 }
-addImage();
+
+function setColors(){
+  document.querySelectorAll(".cell").forEach((el) => {
+    el.style.backgroundColor = el.dataset.backgroundColor;
+  });
+}
 
 function hightlightCells(arr) {
   arr.forEach((pos) => {
-    document.getElementById(pos).style.backgroundColor = "Green";
+    document.getElementById(pos).style.backgroundColor = "#5deb10";
   });
 }
 
 function clearHighlights(arr) {
   arr.forEach((pos) => {
-    document.getElementById(pos).style.backgroundColor = "";
+    // document.getElementById(pos).style.backgroundColor = "";
+    setColors();
   });
 }
 
@@ -823,7 +812,6 @@ function pieceColor(pos) {
 //Checks if there are any pieces within the given array
 function checkForPieces(arr, pClass) {
   let newPos = [];
-  // document.getElementById(pos).innerText === "" || 
   arr.forEach(function (pos) {
     if (document.getElementById(pos).dataset.name === "" || !document.getElementById(pos).classList.contains(pClass)) {
       newPos.push(pos);
@@ -833,17 +821,11 @@ function checkForPieces(arr, pClass) {
   return newPos;
 }
 
-//Undo previous move (limited to 1 move)
-/////Currently Not in Use//////
-function undo(lastActiveId, lastActiveName, lastActiveClass, lastTargetId, lastTargetName, lastTargetClass){
-
-  //Piece Moved
-  document.getElementById(lastActiveId).dataset.name = lastActiveName;
-  document.getElementById(lastActiveId).className = lastActiveClass;
-  //Location of piece moved/taken
-  document.getElementById(lastTargetId).dataset.name = lastTargetName;
-  document.getElementById(lastTargetId).className = lastTargetClass;
-
+function mouseOver(e){
+  document.getElementById(e.target.id).style.backgroundColor = '#f7f565';
+}
+function mouseOut(e){
+  setColors();
 }
 
 ////Special Functions////
@@ -859,12 +841,93 @@ function promotePawn(pos,piece){
   }
 }
 
-//King-Rook Castle
-function castleKingSide(kingPos,rookPos){
-  //Check if king
+//Retart Button
+function restart(){
+  playerColor = 'White';
+  activeCell = false;
+  activePieceText = "";
+  activePiecePos = "";
+  activePieceClass = "";
+  whiteMoves = [];
+  blackMoves = [];
+  piecePositions = "";
+  legalMoves = "";
+  blackKing = "E8";
+  whiteKing = "E1";
+  limitKing = [];
+  playerTurn = true; //true : White, false : Black
+  playerColor = 'White';
+  checkStatus = false;
+  whiteKingBoard = true;
+  blackKingBoard = true;
+  chessboard.addEventListener("click", movePiece);
 
+  document.querySelectorAll(".cell").forEach((el) => {
+    document.getElementById(el.id).dataset.name = "";
+    document.getElementById(el.id).classList.remove('White','Black','active');
+    el.style.backgroundImage = "";
+  });
+  setBoard();
+  addImage();
+  document.querySelector('h2').innerText = playerColor+" Player's Turn"; //Update player turn
+  setColors();
 }
 
-function castleQueenSide(){
+function checkmate(){
+  //Gets list of all available pieces
+  let whitePieces = [];
+  let blackPieces = [];
+  document.querySelectorAll('.cell').forEach((el) =>{
+    console.log(el.dataset.name)
+    if(el.classList.contains('White')){
+      whitePieces.push(el.dataset.name);
+    }
+    if(el.classList.contains('Black')){
+      blackPieces.push(el.dataset.name);
+    }
+  })
 
+  //Checks for king
+  if(!whitePieces.includes('King')){
+    whiteKingBoard = false;
+  }
+  if(!blackPieces.includes('King')){
+    blackKingBoard = false;
+  }
+
+  //Win condition
+  if(whiteKingBoard === false){
+    document.querySelector('h2').innerText = "Black Player Wins!";
+    chessboard.removeEventListener("click", movePiece);
+  }
+  if(blackKingBoard === false){
+    document.querySelector('h2').innerText = "White Player Wins!";
+    chessboard.removeEventListener("click", movePiece);
+  }
 }
+
+
+
+// //King-Rook Castle
+// function castleKingSide(kingPos,rookPos){
+//   //Check if king
+
+// }
+
+// function castleQueenSide(){
+
+// }
+
+
+// //Undo previous move (limited to 1 move)
+// /////Currently Not in Use//////
+// function undo(lastActiveId, lastActiveName, lastActiveClass, lastTargetId, lastTargetName, lastTargetClass){
+
+//   //Piece Moved
+//   document.getElementById(lastActiveId).dataset.name = lastActiveName;
+//   document.getElementById(lastActiveId).className = lastActiveClass;
+//   //Location of piece moved/taken
+//   document.getElementById(lastTargetId).dataset.name = lastTargetName;
+//   document.getElementById(lastTargetId).className = lastTargetClass;
+
+// }
