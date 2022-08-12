@@ -20,7 +20,6 @@ Each player has a total of 16 pieces which can be broken up to:
 For new players that may not know how the different pieces move.  Here is a guide to see how chess pieces move:
 * [How the Chess Pieces Move](https://www.chessable.com/blog/how-the-chess-pieces-move/#:~:text=It%20can%20move%20horizontally%2C%20vertically,the%20same%20square%20as%20another.)
 
-<br>
 
 ## Current Win-Condition
 Traditionally in order to win, it is required for a player to trap the oppositing players king with no option of moving, blocking, or taking the attacking piece. This would "Checkmate" the opposite player.
@@ -58,8 +57,10 @@ Access the game through the link below:
 
 
 ## Future enhancements
-1. Checkmate and move-prevention 
+1. Stalemate, Checkmate and Move-prevention.
 
-2. Undo Button
+2. Undo Button.
 
 3. Update JS to include a nested array containing all of the piece details.
+
+4. Add castling and en passant functions.

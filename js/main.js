@@ -1,4 +1,3 @@
-console.log("Connected!");
 //////Global Variables/////
 //Letter to number Index
 let chessboard = document.getElementById("board");
@@ -53,8 +52,6 @@ function checkerBoard(i,j){
 //////Event Listeners////
 chessboard.addEventListener("click", movePiece);
 restartBtn.addEventListener("click", restart);
-// chessboard.addEventListener("mouseover", mouseOver);
-// chessboard.addEventListener("mouseout", mouseOut);
 
 //////Functions/////
 
@@ -467,7 +464,6 @@ function rookMovement(pos) {
     }
     rookPositions.push(newid);
   }
-  // console.log(rookPositions) //Logs all possible positions in a single array
   return rookPositions;
 }
 
@@ -532,9 +528,6 @@ function movePiece(e) {
   let piecePos = e.target.id;
   let illegalPos;
 
-  console.log(e.target);
-  console.dir(e.target);
-
   //Case 1 - First click on a piece
   //Updates trigger variable
   if (activeCell === false && piece != "" && pClass.contains(playerColor)) {
@@ -573,8 +566,6 @@ function movePiece(e) {
       document.getElementById(activePiecePos).style.backgroundImage = "";
       document.getElementById(activePiecePos).classList.remove("active", "Black", "White");
       clearHighlights(legalMoves);
-      console.log('Huh :'+piecePos)
-      console.log('Piece :'+activePieceText)
       promotePawn(piecePos,activePieceText)
       activePieceText = "";
       activePiecePos = "";
@@ -823,15 +814,7 @@ function checkForPieces(arr, pClass) {
       newPos.push(pos);
     }
   });
-  console.log("These are the new positions: " + newPos);
   return newPos;
-}
-
-function mouseOver(e){
-  document.getElementById(e.target.id).style.backgroundColor = '#f7f565';
-}
-function mouseOut(e){
-  setColors();
 }
 
 ////Special Functions////
@@ -840,9 +823,7 @@ function promotePawn(pos,piece){
   let arr = pos.split("");
   // let curX = letterNumIdx.indexOf(arr[0]);
   let curY = parseInt(arr[1]);
-  console.log('Pawn Y: '+curY);
   if(piece === 'Pawn' && (curY === 8 || curY === 1)){
-    console.log('QUEEEEEEN')
     document.getElementById(pos).dataset.name = 'Queen';
   }
 }
@@ -876,6 +857,7 @@ function restart(){
   setBoard();
   addImage();
   document.querySelector('h2').innerText = playerColor+" Player's Turn"; //Update player turn
+  updateHistory(whiteMoves,blackMoves);
   setColors();
 }
 
@@ -910,28 +892,3 @@ function checkmate(){
     chessboard.removeEventListener("click", movePiece);
   }
 }
-
-
-// //King-Rook Castle
-// function castleKingSide(kingPos,rookPos){
-//   //Check if king
-
-// }
-
-// function castleQueenSide(){
-
-// }
-
-
-// //Undo previous move (limited to 1 move)
-// /////Currently Not in Use//////
-// function undo(lastActiveId, lastActiveName, lastActiveClass, lastTargetId, lastTargetName, lastTargetClass){
-
-//   //Piece Moved
-//   document.getElementById(lastActiveId).dataset.name = lastActiveName;
-//   document.getElementById(lastActiveId).className = lastActiveClass;
-//   //Location of piece moved/taken
-//   document.getElementById(lastTargetId).dataset.name = lastTargetName;
-//   document.getElementById(lastTargetId).className = lastTargetClass;
-
-// }
