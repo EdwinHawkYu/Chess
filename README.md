@@ -57,9 +57,9 @@ Access the game through the link below:
 
 
 ## Future enhancements
-1. Stalemate, Checkmate and Move-prevention.
+1. Stalemate, Checkmate, Undo Button, and Move-prevention.
 
-2. Undo Button.
+2. Add computer AI opponent option.
 
 3. Update JS to include a nested array containing all of the piece details.
 
