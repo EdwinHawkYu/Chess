@@ -81,7 +81,6 @@ function setBoard() {
     }
   }
 
-
   //Set Knights and Bishops (Dataset)
   document.getElementById("C1").dataset.name = "Bishop";
   document.getElementById("F1").dataset.name = "Bishop";
