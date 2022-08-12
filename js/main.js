@@ -48,7 +48,6 @@ function checkerBoard(i,j){
   return sum % 2 === 0 ? '#eaedd0':'#749657';
 }
 
-
 //////Event Listeners////
 chessboard.addEventListener("click", movePiece);
 restartBtn.addEventListener("click", restart);
@@ -238,7 +237,7 @@ function pieceMovement(piece, pClass, piecePos) {
   }
 }
 
-////Piece Movement Functions - Determine available positions:////
+////------Piece Movement Functions - Determine available positions------////
 
 //Pawn diagonal take piece movement
 function returnDia(pos, color, dir) {
@@ -828,7 +827,7 @@ function promotePawn(pos,piece){
   }
 }
 
-//Retart Button
+//Restart Button
 function restart(){
   playerColor = 'White';
   activeCell = false;
