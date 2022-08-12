@@ -30,23 +30,23 @@ Traditionally in order to win, it is required for a player to trap the oppositin
 <br>
 
 ## Different Technologies Used
-- HTML
+- <b>HTML</b>
     * Created the foundation of the piece and chessboard properties.
-- CSS
+- <b>CSS</b>
     * Styled and positioned the browser-game application.
-- JavaScript
+- <b>JavaScript</b>
     * Used to manupulate movement of pieces and data transfer.
     * Updates the board and pieces visually through using DOM events.
 
-## Screenshoots of the Game
-
-
+## Screenshots of the Game
 ![Chessboard](img/Chessboard.png)
+
 Chessboard - Starting Position
 
 <br>
 
 ![King in Check](img/inCheck.png)
+
 Chessboard - White King in Check
 
 <br>
